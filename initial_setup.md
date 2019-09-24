@@ -30,5 +30,6 @@
 9. Navigate to the supervisors page in the admin page and add some supervisors
 10. Navigate to the proposed projects page in the admin page and add some proposed projects
 11. Create a folder named "credentials" in avr\youtubeUpload\. After configuring OAuth 2.0 in the google api console, create a subfolder for each client (folder names must be sequential starting at "1", next client resides in folder named "2" and so on). in each client folder create a file named "client_secrets.json" with all the information from the API Console (can be downloaded from the google api console). (make sure its "client_secrets.json" and not "client_secret.json")
+12. in "youtubeUpload/youtubeUpload.py" set the num_of_clients variable
 
 ### Enjoy :wink:
