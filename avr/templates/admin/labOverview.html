@@ -1,0 +1,159 @@
+{% extends "admin/adminLayout.html" %} 
+
+
+{% block styles %} 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+	<style>
+		h3 {
+			font-weight: bold;
+		}
+		.card {
+			border-radius: 0.4rem;
+			color:#00407b;
+			cursor: pointer;
+		}
+		.card:hover {
+			transition: all 0.15s ease-in-out;
+			background-color: #f2fffb;
+		}
+		.category-icon {
+			font-size: 2.5rem;
+		}
+		.icon-back {
+			width: 5rem;
+			height: 5rem;
+		}
+		.icon-back i{
+			transform: translate(0, 50%);
+		}
+
+		@keyframes fadeIn {
+			from {opacity: 0}
+			to {opacity: 1}
+		}
+
+		.fadeInAnimated {
+			opacity: 0;
+			animation: fadeIn 0.4s forwards;
+		}
+
+		@media (max-width: 767px) {
+			.col-sm-5 {
+				margin-top:20px;
+			}
+		}
+	</style>
+{% endblock styles %} 
+
+{% block content %}
+<div class="container fadeInAnimated">
+	<h1>Lab Overview</h1>
+	<div class="row justify-content-center mt-5">
+		<div class="col-sm-5">
+			<div id="projectsCard" class="card shadow">
+				<div class="card-body">
+					<div class="row mx-md-2">
+						<div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+							<div class="icon-back rounded-circle mx-auto" style="background-color: #eee2ff">
+								<i class="fas fa-laptop-code category-icon" style="color: #ae4eff"></i>
+							</div>
+						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col-12 col-md-6">
+									<h3>{{ overview.projects.total }}</h3><span>Projects</span>	
+								</div>
+								<div class="col-12 col-md-6 mt-3 mt-md-0">
+									<h3>{{ overview.projects.thisSemester.finished }} / {{ overview.projects.thisSemester.total }}</h3><span>Completed This Semester</span>
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-5">
+			<div class="card shadow" id="studentsCard">
+				<div class="card-body">
+					<div class="row mx-md-2">
+						<div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+							<div class="icon-back rounded-circle mx-auto" style="background-color: #d2fff9">
+								<i class="fas fa-users category-icon" style="color: #18cfb6"></i>
+							</div>
+						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col-12 col-md-6">
+									<h3>{{ overview.students.total }}</h3><span>Students</span>	
+								</div>
+								<div class="col-12 col-md-6 mt-3 mt-md-0">
+									<h3>{{ overview.students.thisSemester }}</h3><span>Registered This Semester</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt-4 row justify-content-center">
+		<div class="col-sm-5">
+			<div class="card shadow" id="proposedProjectsCard">
+				<div class="card-body">
+					<div class="row mx-md-2">
+						<div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+							<div class="icon-back rounded-circle mx-auto" style="background-color: #ffe6f7">
+								<i class="fas fa-vr-cardboard category-icon" style="color: #dc4b9b"></i>
+							</div>
+						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col-12 col-md-6">
+									<h3>{{ overview.proposedProjects.total }}</h3><span>Proposed Projects</span>	
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-5">
+			<div class="card shadow" id="supervisorsCard">
+				<div class="card-body">
+					<div class="row mx-md-2">
+						<div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+							<div class="icon-back rounded-circle mx-auto" style="background-color: #e4ebff">
+								<i class="fas fa-user-graduate category-icon" style="color: #4e69ff"></i>
+							</div>
+						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col-12 col-md-6">
+									<h3>{{ overview.supervisors.total }}</h3><span>Supervisors</span>	
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+	$("#projectsCard").click(function() {
+		window.location.href = "/Admin/Projects";
+	});
+	$("#studentsCard").click(function() {
+		window.location.href = "/Admin/Students";
+	});
+	$("#proposedProjectsCard").click(function() {
+		window.location.href = "/Admin/ProposedProjects";
+	});
+	$("#supervisorsCard").click(function() {
+		window.location.href = "/Admin/Supervisors";
+	});
+</script>
+{% endblock scripts %}

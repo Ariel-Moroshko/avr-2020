@@ -1,0 +1,656 @@
+{% extends "admin/adminLayout.html" %} 
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+<style>
+	.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, 
+	.pagination>.active>span:hover, .pagination>.active>a:focus, 
+	.pagination>.active>span:focus {
+		font-weight: bold;
+	}
+	#mainTable th[data-field="btnEdit"]{
+		min-width: 6rem;
+	}
+
+	/* #### fix for page content shifting left when opening modal #### */
+	.modal {
+   		overflow-y: auto;
+	}
+	.modal-open {
+		overflow: auto;
+	}
+	.modal-open[style] {
+		padding-right: 0px !important;
+	}
+
+	#mainTable th[data-field="title"] {
+		width: 20%;
+    }
+    
+    label {
+        margin-bottom: 0;
+    }
+
+	.fht-cell {
+		padding: 20px 0;
+		padding-right: 10px;
+	}
+
+	.academicPoint {
+		border: 2px solid #dee3ea; 
+		padding: 1.4rem 0rem; 
+		border-radius: 1rem;
+		font-size: 1.2rem;
+		cursor: pointer;
+		transition: border-color .15s ease-in-out;
+	}
+	.academicPoint:hover {
+		border-color: #83e8df;
+	}
+
+	.academicPoint-selected {
+		background-color: #ecfffc;
+    	border-color: #83e8df;
+	}
+
+	@media (min-width: 992px){ 
+		#addNewProposedProjectModal .modal-lg, .modal-xl {
+			max-width: 620px;
+		}
+		#editProposedProjectModal .modal-lg, .modal-xl {
+			max-width: 620px;
+		}
+	}
+	/* ########################################################################*/
+</style>
+{% endblock styles %}
+{% block content %}
+<h1>Proposed Projects</h1>
+<div class="container mt-4">
+	{% with messages = get_flashed_messages(with_categories=true) %} 
+		{% if messages %} 
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }} mt-4">
+					{{ message }}
+				</div>
+			{% endfor %} 
+		{% endif %} 
+	{% endwith %}
+
+	
+	<table id="mainTable" data-toggle="table" data-search="false" data-pagination="true" data-filter-control="true" data-show-export="false" data-click-to-select="true" data-toolbar="#toolbar" data-pagination-v-align="bottom" data-strict-search="false" data-sort-order="asc" data-sort-name="title" data-url="/Admin/ProposedProjects/json" data-side-pagination="server">
+			<thead>
+				<tr>
+					<th data-field="image" data-align="left" data-width="13%" data-sortable="false">Image</th>
+					<th data-field="title" data-align="left" data-sortable="true" data-filter-control="input">Title</th>
+					<th data-field="description" data-align="left" data-sortable="false">Description</th>
+					<th data-field="supervisorsNames" data-align="left" data-width="15%">Supervisors</th>
+					<th data-field="btnPublished">Published</th>
+					<th data-field="btnEdit"></th>
+					<th data-field="btnDelete">
+						<button type="button" id="btnAddNewProposedProject" class="btn shadow"  data-toggle="modal" data-target="#addNewProposedProjectModal"><i class="fas fa-plus"></i> New</button>
+					</th>
+				</tr>
+			</thead>
+		</table>
+
+
+	<div class="modal fade bg" id="editProposedProjectModal" tabindex="-1" role="dialog" aria-labelledby="editProposedProjectModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content" style="color: #000;">
+					<div class="modal-header">
+						<div class="modal-title">
+							<span name="proposedProjectTitle" style="font-size:1.1rem"></span>
+						</div>
+						<button type="button" class="close p-0 m-0" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true" style="color: #ffffff;">×</span>
+						</button>
+					</div>
+					<div id="editProposedProjectMessages" name="errorMessage" style="display: none;"></div>
+					<form class="form" id="editProposedProjectForm" method="POST" action="{{ url_for('manageProposedProjects') }}" enctype="multipart/form-data">
+						<input type="hidden" name="pageForm" value="editProposedProjectForm">
+						<div class="modal-body p-4 px-2">
+							{{ editForm.hidden_tag() }}	
+							<div class="text-md-left pb-4 mx-md-5">
+                                <div class="row mt-2">
+                                    <div class="col-12 col-md-4 my-auto">
+                                        {{ editForm.title.label(class="font-weight-bold") }}
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        {{ editForm.title(class="form-control") }} 
+                                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4 border-bottom" style="padding-bottom: 2.3rem">
+                                    <div class="col-12 col-md-4 my-auto">
+                                        {{ editForm.image.label(class="font-weight-bold") }}
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        {{ editForm.image(class="custom-file-input") }} 
+                                        <label class="custom-file-label text-left mx-3" for="image">Choose file</label>	
+                                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+								
+                                <div class="row" style="margin-top: 2.3rem">
+                                    <div class="col-12 col-md-4 my-auto">
+                                        {{ editForm.supervisor1.label(class="font-weight-bold") }}
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        {{ editForm.supervisor1(class="custom-select form-control") }} 
+                                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+								
+                                <div class="row mt-4">
+                                    <div class="col-12 col-md-4 my-auto">
+                                        {{ editForm.supervisor2.label(class="font-weight-bold") }}
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        {{ editForm.supervisor2(class="custom-select form-control") }} 
+                                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                        
+                                <div class="row mt-4 border-bottom" style="padding-bottom: 2.3rem">
+                                    <div class="col-12 col-md-4 my-auto">
+                                        {{ editForm.supervisor3.label(class="font-weight-bold") }}
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        {{ editForm.supervisor3(class="custom-select form-control") }} 
+                                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+								
+								
+                                <div class="row" style="margin-top: 2.3rem">
+                                    <div class="col-12 mb-2">
+                                        {{ editForm.description.label(class="font-weight-bold") }} 
+                                    </div>
+                                    <div class="col-12 mt-1">
+                                        {{ editForm.description(class="form-control p-3", rows="6") }} 
+                                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+								
+								
+                                <div class="row" style="margin-top: 2.3rem">
+                                    <div class="col-12 mb-2">
+                                        <label class="font-weight-bold" style="margin-bottom: 1rem">Academic Points <small class="ml-1">(multiple options allowed)</small></label>
+                                    </div>
+                                    <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                        {{ editForm.oneAcademicPoint(class="d-none") }}
+                                        <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                        1
+                                    </div>
+                                    <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                        {{ editForm.twoAcademicPoints(class="d-none") }}
+                                        <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                        2
+                                    </div>
+                                    <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                        {{ editForm.threeAcademicPoints(class="d-none") }}
+                                        <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                        3
+                                    </div>
+                                    <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                        {{ editForm.fourAcademicPoints(class="d-none") }}
+                                        <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                        4
+                                    </div>
+                                    <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                        {{ editForm.fiveAcademicPoints(class="d-none") }}
+                                        <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                        5
+                                    </div>
+                                </div>
+								
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btnCloseModal" data-dismiss="modal">Cancel</button>
+							{{ editForm.submitEditForm(class="btn btn-primary") }}
+							<button id="btnSendingEditProposedProjectForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+								<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								<span class="ml-1">Saving...</span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+	<div class="modal fade bg" id="addNewProposedProjectModal" tabindex="-1" role="dialog" aria-labelledby="addNewProposedProjectModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addNewProposedProjectModalLabel">Create Proposed Project</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div id="addProposedProjectMessages" name="errorMessage" style="display: none;"></div>
+				<form id="addProposedProjectForm" method="POST" action="{{ url_for('manageProposedProjects') }}" enctype="multipart/form-data">
+					{{ addForm.hidden_tag() }}
+					<input type="hidden" name="pageForm" value="addProposedProjectForm">
+					<div class="modal-body p-4 px-2">
+                        <div class="text-md-left pb-4 mx-md-5">
+                            <div class="row mt-2">
+                                <div class="col-12 col-md-4 my-auto">
+                                    {{ addForm.newTitle.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newTitle(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4 border-bottom" style="padding-bottom: 2.3rem">
+                                <div class="col-12 col-md-4 my-auto">
+                                    {{ addForm.newImage.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newImage(class="custom-file-input") }} 
+                                    <label class="custom-file-label text-left mx-3" for="newImage">Choose file</label>	
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="margin-top: 2.3rem">
+                                <div class="col-12 col-md-4 my-auto">
+                                    {{ addForm.newSupervisor1.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newSupervisor1(class="custom-select form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-12 col-md-4 my-auto">
+                                    {{ addForm.newSupervisor2.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newSupervisor2(class="custom-select form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                    
+                            <div class="row mt-4 border-bottom" style="padding-bottom: 2.3rem">
+                                <div class="col-12 col-md-4 my-auto">
+                                    {{ addForm.newSupervisor3.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newSupervisor3(class="custom-select form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="row" style="margin-top: 2.3rem">
+                                <div class="col-12 mb-2">
+                                    {{ addForm.newDescription.label(class="font-weight-bold") }} 
+                                </div>
+                                <div class="col-12 mt-1">
+                                    {{ addForm.newDescription(class="form-control p-3", rows="6") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="row" style="margin-top: 2.3rem">
+                                <div class="col-12 mb-2">
+                                    <label class="font-weight-bold" style="margin-bottom: 1rem">Academic Points <small class="ml-1">(multiple options allowed)</small></label>
+                                </div>
+                                <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                    {{ addForm.new_oneAcademicPoint(class="d-none") }}
+                                    <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                    1
+                                </div>
+                                <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                    {{ addForm.new_twoAcademicPoints(class="d-none") }}
+                                    <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                    2
+                                </div>
+                                <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                    {{ addForm.new_threeAcademicPoints(class="d-none") }}
+                                    <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                    3
+                                </div>
+                                <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                    {{ addForm.new_fourAcademicPoints(class="d-none") }}
+                                    <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                    4
+                                </div>
+                                <div class="col-3 col-md-2 mx-2 mx-md-auto text-center font-weight-bold shadow-sm academicPoint">
+                                    {{ addForm.new_fiveAcademicPoints(class="d-none") }}
+                                    <span style="position: absolute;top: -0.8rem;right: -0.4rem;font-size: 1.3rem;display: none;"><i class="fas fa-check-circle"></i></span>
+                                    5
+                                </div>
+                            </div>
+                            
+                        </div>		
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btnCloseModal" data-dismiss="modal">Close</button>
+						{{ addForm.submitAddForm(class="btn btn-primary") }}
+						<button id="btnSendingAddProposedProjectForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+							<span class="ml-1">Creating...</span>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+
+<div class="modal fade" id="deleteProposedProjectModal" tabindex="-1" role="dialog" aria-labelledby="deleteProposedProjectModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header delete-header">
+				<h5 class="modal-title" id="deleteProposedProjectModalLabel">Delete Proposed Project</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Are you sure?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btnCloseModal" data-dismiss="modal">No</button>
+				<button type="button" onclick='document.getElementById("deleteForm").submit()' class="btn btnConfirmDelete px-3">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="deleteForm" method="POST" action="{{ url_for('manageProposedProjects') }}/Delete">
+	{{ deleteForm.hidden_tag() }}
+</form>
+
+<div id="snackbars">
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="../static/js/bootstrap-table.js"></script>
+<script src="../static/js/bootstrap-table-filter-control.js"></script>
+
+<script>
+	/* display the filename when choosing a profile picture */
+	$('#image, #newImage').on('change',function(){
+		let fileName = $(this).val().split('\\').pop(); 
+		$(this).next('.custom-file-label').addClass("selected").html(fileName);
+	})
+
+	var snackbarCounter = 0;
+	$("#mainTable").on('load-success.bs.table', function(){
+		$("button[name='btnEdit']").on("click", function() {
+			$(this).find("i").hide();
+			$(this).find("span[name='loading']").show();
+			$(this).attr("disabled", true);
+		})
+
+		$("input[type='checkbox'][name='publishStatusCheckbox']").on("click", function() {
+			$.post("/Admin/ProposedProjects/UpdatePublishState", {	
+				id: $(this).data("id"),
+				state: $(this).is(":checked")
+			}).done(function(answer) {
+				let snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar'>Updated successfully!</div>`);
+				if (answer.result !== "ok") {
+					snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar snackbar-failure'>Update failed: unknown proposed project id.</div>`);
+				}
+				$("#snackbars").append(snackbar);
+				snackbar.addClass("show");
+				setTimeout(function() { 
+					snackbar.remove();
+				}, 3000);
+				
+			}).fail(function() {
+				let snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar snackbar-failure'>Update failed: couldn't reach the server...</div>`);
+				$("#snackbars").append(snackbar);
+				snackbar.addClass("show");
+				setTimeout(function() { 
+					snackbar.remove();
+				}, 3000);
+			})
+		});
+	});
+
+
+	function getProposedProjectData(id) {
+		var xmlhttp = new XMLHttpRequest();
+		var url = "/Admin/ProposedProjects/"+id+"/json";
+		xmlhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var data = JSON.parse(this.responseText);
+				editProposedProject(data);		
+			}
+		};
+		xmlhttp.open("GET", url, true);
+		xmlhttp.send();
+	}
+
+	$('#editProposedProjectModal').on('shown.bs.modal', function () {
+		let proposedProjectId = $("#editProposedProjectForm #proposedProjectId").val();
+		let button = $(`button[name='btnEdit'][data-proposed-project-id='${proposedProjectId}']`);
+		button.find("span[name='loading']").hide();
+		button.find("i").show();
+		button.attr("disabled", false);
+	});	
+
+	function editProposedProject(proposedProjectData) {	
+		$("#editProposedProjectModal .modal-header span[name='proposedProjectTitle']").html(`Editing<span class='mx-2'>•</span>`+proposedProjectData.title);
+		$("#editProposedProjectForm #proposedProjectId").val(proposedProjectData.id);
+		$("#editProposedProjectForm #title").val(proposedProjectData.title);
+		$("#editProposedProjectForm #description").val(proposedProjectData.description);
+
+		// clear supervisors and set proposed project's supervisors
+		$("#editProposedProjectForm #supervisor1").val('')
+		$("#editProposedProjectForm #supervisor2").val('')
+		$("#editProposedProjectForm #supervisor3").val('')
+		proposedProjectData.supervisors.forEach(function (supervisor, index) {
+			$("#editProposedProjectForm #supervisor"+(index+1)).val(supervisor.id);
+		});
+
+		resetAcademicPoints();
+
+		if(proposedProjectData.oneAcademicPoint) {
+			$("#editProposedProjectForm #oneAcademicPoint").parent().click(); 
+		}
+		if(proposedProjectData.twoAcademicPoints) {
+			$("#editProposedProjectForm #twoAcademicPoints").parent().click(); 
+		}
+		if(proposedProjectData.threeAcademicPoints) {
+			$("#editProposedProjectForm #threeAcademicPoints").parent().click(); 
+		}
+		if(proposedProjectData.fourAcademicPoints) {
+			$("#editProposedProjectForm #fourAcademicPoints").parent().click(); 
+		}
+		if(proposedProjectData.fiveAcademicPoints) {
+			$("#editProposedProjectForm #fiveAcademicPoints").parent().click(); 
+		}
+
+		$("#editProposedProjectModal").modal("show");
+		
+	}
+
+	function resetAcademicPoints() {
+		$("#editProposedProjectForm .academicPoint input[type='checkbox']").each(function() {
+			if($(this).is(":checked")) {
+				$(this).click();
+				$(this).parent().toggleClass("academicPoint-selected");
+				$(this).parent().find("span").hide();
+			}
+		});
+	}
+
+	function deleteProposedProject(id){
+		$("#deleteForm").find('#deleteProposedProjectId').val(id);
+	}
+	
+
+	
+	/* select yaron and boaz as supervisors automatically in the add new modal */
+	if ($("#newSupervisor1 option:contains('Yaron Honen')").length > 0) {
+		$("#newSupervisor1 option:contains('Yaron Honen')").attr("selected",true);
+	}
+	if ($("#newSupervisor2 option:contains('Boaz Sternfeld')").length > 0) {
+		$("#newSupervisor2 option:contains('Boaz Sternfeld')").attr("selected",true);
+	}
+
+	$("#addProposedProjectForm .academicPoint").click(function() {
+		$(this).toggleClass("academicPoint-selected");
+		$(this).find("span").fadeToggle(60);
+		$(this).find("input[type='checkbox']").click();
+	});
+
+	$("#addProposedProjectForm .academicPoint input[type='checkbox']").click(function(e) {
+		e.stopPropagation();
+	});
+
+	$("#editProposedProjectForm .academicPoint").click(function() {
+		$(this).toggleClass("academicPoint-selected");
+		$(this).find("span").fadeToggle(60);
+		$(this).find("input[type='checkbox']").click();
+	});
+
+	$("#editProposedProjectForm .academicPoint input[type='checkbox']").click(function(e) {
+		e.stopPropagation();
+	});
+
+
+	/* ############################ 	Send form with ajax		############################ */
+	function handleEditFormResponse(response) {			
+		if (response['status'] == 'error') {
+			$("#btnSendingEditProposedProjectForm").hide();
+			$("#submitEditForm").show();
+			$("div#editProposedProjectMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+			for(let field in response['errors']) {
+				if (field == "csrf_token") {
+					$("div#editProposedProjectMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+				}
+				else {
+					$(`#${field}`).addClass("is-invalid");
+					$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+					for (let error of response['errors'][field]) {
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+					}
+					$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+				}
+			}
+			$("div#editProposedProjectMessages").fadeIn();
+			$("#editProposedProjectModal").animate({ scrollTop: 0 }, 600);
+			
+		}
+		else if (response['status'] == 'proposedProjectIdNotFound') {
+			$("#btnSendingEditProposedProjectForm").hide();
+			$("#submitEditForm").show();
+			$("div#editProposedProjectMessages").append(`<div class="alert alert-danger m-0">Error: couldn't find proposed project with id '${response['id']}' in the db.</div>`);
+			$("div#editProposedProjectMessages").fadeIn();
+			$("#editProposedProjectModal").animate({ scrollTop: 0 }, 600);
+		}
+		else if (response['status'] == 'success') {
+			let redirectURL = window.location.pathname;
+			window.location.replace(redirectURL);
+		}
+	}
+
+	function handleAddFormResponse(response) {			
+		if (response['status'] == 'error') {
+			$("#btnSendingAddProposedProjectForm").hide();
+			$("#submitAddForm").show();
+			$("div#addProposedProjectMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+			for(let field in response['errors']) {
+				if (field == "csrf_token") {
+					$("div#addProposedProjectMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+				}
+				else {
+					$(`#${field}`).addClass("is-invalid");
+					$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+					for (let error of response['errors'][field]) {
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+					}
+					$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+				}
+			}
+			$("div#addProposedProjectMessages").fadeIn();
+			$("#addNewProposedProjectModal").animate({ scrollTop: 0 }, 600);
+			
+		}
+
+		else if (response['status'] == 'success') {
+			let redirectURL = window.location.pathname;
+			window.location.replace(redirectURL);
+		}
+	}
+
+	function sendEditFormAjax(formData) {
+		fetch(window.location.href, {
+			method: "post",
+			body: formData
+		})
+		.then((response) => response.json())
+		.then((response) => handleEditFormResponse(response))
+		.catch(function (error) {
+			console.log(error);
+		})
+	}
+
+	function sendAddFormAjax(formData) {
+		fetch(window.location.href, {
+			method: "post",
+			body: formData
+		})
+		.then((response) => response.json())
+		.then((response) => handleAddFormResponse(response))
+		.catch(function (error) {
+			console.log(error);
+		})
+	}
+
+	
+	$("#editProposedProjectForm").submit(function( event ) {
+		event.preventDefault();
+		$("#editProposedProjectForm .is-invalid").each(function() {
+			$(this).removeClass("is-invalid");
+		})
+		$("div#editProposedProjectMessages").empty();
+		$("div#editProposedProjectMessages").hide();
+		$("#submitEditForm").hide();
+		$("#btnSendingEditProposedProjectForm").show();
+		let formData = new FormData(document.getElementById("editProposedProjectForm"));
+		sendEditFormAjax(formData);
+	});
+
+
+	$("#addProposedProjectForm").submit(function( event ) {
+		event.preventDefault();
+		$("#addProposedProjectForm .is-invalid").each(function() {
+			$(this).removeClass("is-invalid");
+		})
+		$("div#addProposedProjectMessages").empty();
+		$("div#addProposedProjectMessages").hide();
+		$("#submitAddForm").hide();
+		$("#btnSendingAddProposedProjectForm").show();
+		let formData = new FormData(document.getElementById("addProposedProjectForm"));
+		sendAddFormAjax(formData);
+	});
+
+	/* ######################## 	END OF Send form with ajax		#########################*/
+
+
+	$('#editProposedProjectModal').on('hide.bs.modal', function() {
+		$("#editProposedProjectModal div[name='errorMessage']").hide();
+		$("#editProposedProjectModal .is-invalid").each(function() {
+			$(this).removeClass("is-invalid");
+		})
+	});
+
+	
+</script>
+
+{% endblock scripts %}

@@ -1,0 +1,447 @@
+@import url("font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,300,100italic,300italic");
+
+/* Links */
+a, a:focus, a:hover {
+ /*  color: #fff; */
+}
+
+/* Base structure */
+html, body {
+  height: 100%;
+  /* font-size: 1.2vh !important;  */
+}
+
+body {
+	text-align: center;
+	background-color: rgb(242, 244, 246);
+	color: rgb(74, 86, 96);
+	font-family:'Avenir LT Std 55 Roman', 'Arial';
+}
+
+@font-face {
+	font-family: 'Avenir LT Std 55 Roman';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Avenir LT Std 55 Roman'), url('AvenirLTStd-Roman.woff') format('woff');
+}
+
+
+.btn-primary {
+	background-color:  rgb(91, 195, 242) !important;
+	border: 0 !important;
+	border-radius: 7px;
+}
+
+.btn-primary:hover {
+	background-color:  rgb(36, 168, 230) !important;
+}
+
+.btn-success {
+	background-color:  rgb(117, 225, 131);
+	border: 0 !important;
+	border-radius: 7px;
+}
+
+.btn-secondary {
+	background-color:  rgb(74, 86, 96) !important;
+	border: 0 !important;
+	border-radius: 7px;
+}
+
+
+.btn[name="btnAddStudents"] {
+	border-radius: 1.25rem !important;
+	background-color: #ffffff;
+	color: #014D40;
+	padding: .5rem 1rem;
+	line-height: 1.5;
+	border-color: #6fadcb;
+}
+
+.btn[name="btnAddStudents"]:hover {
+	background-color: #f0f8ff;
+}
+
+
+#btnAddNewProject, #btnAddNewProposedProject, #btnAddNewSupervisor {
+	border-radius: 1.25rem !important;
+	background-color: #C6F7E2;
+	color: #014D40;
+	padding: .5rem 1rem;
+	line-height: 1.5;
+	border-color: #dffff1;
+}
+
+#btnAddNewProject:hover, #btnAddNewProposedProject:hover, #btnAddNewSupervisor:hover  {
+	background-color: rgb(157, 235, 201);
+}
+
+span[name="studentNOProjectBadge"] {
+	border-radius: 1.25rem !important;
+	background-color: #f6f6f6;
+	color: #2b1b41;
+	border-color: #bfdef4;
+	line-height: 1.5;
+	padding: .5rem 1rem;
+	
+}
+
+
+.btn[name="studentProjectBadge"] {
+	border-radius: 1.25rem !important;
+	background-color: #F2EBFE;
+	color: #580A94;
+	border-color: #ece0ff;
+	line-height: 1.5;
+	padding: .5rem 1rem;
+	
+}
+
+.btn[name="studentProjectBadge"]:hover {
+	background-color: #DAC4FF;
+}
+
+.btn[name="btnEdit"] {
+	border-radius: 1.25rem !important;
+	background-color: #f3faff;
+	color: #0c72b7;
+	border-color: #bfdef4;
+}
+
+.btn[name="btnEdit"]:hover {
+	background-color: #cdebfd;
+}
+
+.btn[name="btnDelete"] {
+	border-radius: 1.25rem !important;
+	background-color: #fffbfc;
+	color: #b0414b;
+	border-color: #fcdadd;
+}
+
+
+.btn[name="btnDelete"]:hover {
+	background-color: #ffe4eb;
+}
+
+h1 {
+	margin-top: 2.3em;
+	/* padding-bottom:0.5em; */
+/* 	background-color: white; */
+}
+
+h4 {
+	font-weight: 200;
+	margin: 0 0 0.8em 0;
+}
+
+.navbar-nav > li {
+
+}
+
+.nav-item a.active {
+  border-bottom: 2px solid rgb(87, 168, 208);
+
+}
+.nav-item a:hover {
+	font-weight: 700;
+}
+
+
+label {
+	margin-top: 5px;
+}
+
+input {
+	border-radius: 20px;
+}
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+input::-webkit-input-placeholder {
+	color: rgb(175, 175, 175) !important;
+	font-size: 0.8em;
+}
+
+
+.required .col-form-label:before {
+	content:"* ";
+	color:red;
+}
+
+.avatar {
+	vertical-align: middle;
+	/* width: 5.5vh;
+	height: 5.5vh; */
+	max-width: 45px;
+	max-height: 45px;
+	border-radius: 50%;
+}
+
+
+.nav-item{
+	margin-right: 1em;
+}
+
+.form-group{
+	justify-content: center;
+}
+.navbar {
+	background-color: rgb(42, 48, 53) !important; 
+}
+
+.navbar-nav > li > .dropdown-menu > .dropdown-item:focus {     
+	background-color: rgb(36, 168, 230);  
+}
+
+
+.navbar .nav-link {
+	color: rgba(255, 255, 255, 0.801) !important;
+}
+
+.col-form-label, .col-sm-2{
+	border: 0px solid yellow;
+	width: auto !important;
+	text-align: right;
+
+}
+
+td, th {
+	vertical-align: middle !important;
+	border-bottom: 2px solid rgb(245, 247, 248) !important;
+	border-top: 0px solid white !important;
+	border-left:  0px solid white !important;
+}
+
+div[name="studentsList"] td, div[name="studentsList"] th {
+	border-bottom: 0 !important;
+}
+
+#mainTable {	
+	background-color: rgb(255, 255, 255);
+	border-radius: 10px;
+}
+
+#mainTable th:first-child ,#mainTable tr td:first-child {
+	padding-left: 40px !important;
+}
+
+#mainTable th:last-child ,#mainTable tr td:last-child{
+	padding-right: 40px !important;
+}
+
+th {
+	vertical-align:bottom !important;
+}
+
+.fht-cell {
+	padding: 20px;
+}
+
+.fixed-table-container {
+	border: 0px solid black !important;
+}
+
+.fixed-table-body {
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+	border-radius: 0.8rem!important;
+}
+
+.page-list .dropdown-menu {
+	min-width: 0px !important; 
+	padding: 20px;
+	margin: 5px;
+	background: #dedfe0 !important;
+	
+}
+.dropup li a {
+	color: black !important;
+}
+.dropup li:not(:first-child) {
+	padding-top: 10px;
+	
+}
+
+.modal-header {
+	background-color: #eee;
+	
+}
+
+.card-img-top {
+	/* width:440px; */
+	max-width:100%;
+	width: auto;
+	height: 200px;
+	/* width: 100%; */
+	margin: 0 auto;
+    /* object-fit: scale-down; */
+  }
+
+.card {
+	/* color: rgb(236, 236, 236); */
+	border: solid 0px rgba(255, 255, 255, 0.5);
+	border-radius: 0.8rem ;
+	/* vertical-align: bottom !important; */
+}
+
+.card-title {
+	/* vertical-align: bottom !important; */
+}
+
+.card-text {
+	white-space: pre-line;
+}
+
+.hiddenColumn{
+	display: none;
+	visibility: hidden;
+}
+
+.form-control {
+	height: calc(2.7rem);
+}
+
+tbody tr:hover {
+	/* background-color: rgba(253, 133, 253, 0.158) !important; */
+}
+
+.projectStatusHeading {
+	line-height: 3.5rem;
+	font-size: 1.5rem;
+	padding: 0 0.8rem 0 0;
+}
+
+.projectStatusHeading.notCompleted .h2{
+	background-color: #e0e0e0;
+	color: #484040;
+	box-shadow: 0 0 0 8px #f4f4f4;
+	vertical-align: middle;
+}
+
+.projectStatusHeading span{
+	vertical-align: middle;
+	
+}
+
+.projectStatusHeading .h2{
+	background-color: #a8ffc2;
+	color: #0d733c;
+	border-radius: 50%;
+	padding: 0.4rem 1rem;
+	margin-left: 1rem;
+	box-shadow: 0 0 0 8px #d5ffe2;
+	font-size: 1.6rem;
+}
+
+.projectStatusContent {
+	border-right: 3px dashed #52525238;
+	margin-right: 2.2rem;
+	line-height: 1rem;
+}
+
+.custom-control.custom-checkbox {
+	/* border-bottom: 1px solid rgba(128, 128, 128, 0.123); */
+	font-size: 1.2rem;
+	padding-right: 2.4rem;
+	
+}
+
+label.custom-control-label {
+  position: relative;
+  padding: 0.2rem 1.8rem 0.2rem 0;
+}
+
+label.custom-control-label::before, label.custom-control-label::after{
+  right: 0;
+  top: 0.5rem;
+  left: auto;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+
+.project-status-stage { 
+	border-radius: 7px;
+}
+
+#studentsTable .student-selected {
+	background-color: #C6F7E2;
+}
+
+
+.modal-body .nav-tabs .nav-link.active {
+    font-weight:bold;
+    background-color: transparent;
+    border-bottom:3px solid #288cbe;
+    border-right: none;
+    border-left: none;
+	border-top: none;
+	color: 000;
+}
+
+.modal-body .nav-tabs .nav-link:hover {
+	border-right: none;
+    border-left: none;
+	border-top: none;
+    font-weight: 700;
+}
+
+.modal-body .nav-tabs .nav-link {
+	color: #212321;
+	font-weight: 500;
+}
+
+
+
+
+.round-checkbox
+{
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	display: inline-block;
+	position: relative;
+	background-color: #c3c3c3;
+	color:#095436;
+	top: 7px;
+	height: 1.3rem;
+	width: 1.3rem;
+	border: 0;
+	border-radius: 50px;
+	cursor: pointer;     
+	margin-right: 2.5rem;
+	outline: none;
+	box-shadow: 0 0 0 5px #e6e6e6;
+}
+.round-checkbox:checked::before
+{
+     position: absolute;
+     font: 1rem/1 'Open Sans', sans-serif;
+     left: 6px;
+     top: 2px;
+     content: '\02143';
+     transform: rotate(40deg);
+}
+.round-checkbox:hover
+{
+	 /* background-color: #f7f7f7; */
+	 filter:  brightness(0.95);
+}
+.round-checkbox:checked
+{
+	background-color: #a8d7ff;
+	box-shadow: 0 0 0 5px #daf1ff;
+}
+.projectStatus label
+{
+	font: 1.2rem/1.7 'Open Sans', sans-serif;
+	color: rgb(36, 36, 36);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	cursor: pointer;
+	padding-right: 0.8rem;
+	vertical-align: middle;
+} 

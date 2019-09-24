@@ -1,0 +1,907 @@
+@import url("font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,300,100italic,300italic");
+
+/* Links */
+a, a:focus, a:hover {
+ /*  color: #fff; */
+}
+
+.inputGroupFocused {
+	box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+	border-radius: 1.2rem;
+}
+
+/* Base structure */
+html, body {
+  height: 100%;
+  /* font-size: 1.2vh !important;  */
+}
+
+body {
+	text-align: center;
+	background-color: rgb(242, 244, 246);
+	color: rgb(74, 86, 96);
+	font-family: 'font-Roman', 'Segoe UI', 'Arial';
+}
+
+ @font-face {
+	font-family: 'font-Roman';
+	font-style: normal;
+	font-weight: normal;
+	src: local('font-Roman'), url('font-Roman.woff') format('woff');
+}
+
+nav .dropdown-item:active, nav .dropdown-item:focus {
+	background-color: #e9f1ff !important;
+	color: rgb(36, 88, 202) !important;
+}
+
+.pageTitle {
+	position: relative;
+	margin-top: 6.3em;
+	text-align: center;
+}
+
+.pageTitle h1 {
+	display: inline;
+	position: relative;
+	letter-spacing: -0.02rem;
+	font-size: 2.5rem;
+	color: #3a3a3a;
+}
+
+.pageTitle h1::after {
+	content: "";
+	position: absolute;
+	width: 50%;
+	height: 0.4rem;
+	bottom: -1.1rem;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: rgb(0, 26, 76);
+}
+
+.btn-primary {
+	/* background-color:  #0790f4 !important; */
+	background-color:  #001a4c !important;
+	border: 0 !important;
+	border-radius: 1.2rem;
+	padding: .5rem 1rem;
+	line-height: 1.5;
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.modal .btn-primary {
+	background-color: #09368f !important;	
+}
+
+
+.btn-primary:hover {
+	/* background-color:  #2c9ef0 !important; */
+	background-color:  #032764 !important;
+}
+
+.btn-outline-primary {
+	border-radius: 1.2rem;
+	color: #1d3154;
+	border-color: #728098;
+}
+
+.btn-outline-primary:hover {
+	background-color:  #1d3154 !important;
+	color: #fff;
+	border-color: #1d3154;
+}
+
+.btn-outline-dark {
+	border-radius: 1.2rem;
+	color: rgb(26, 56, 74);
+	border-color: #597996;
+}
+
+.btn-outline-dark:hover, .btn-outline-dark:active {
+	background-color: rgb(26, 56, 74) !important;
+	border-color: #597996;
+	color: #f0f0f0;
+	transition: all .15s;	
+}
+
+.btn-success {
+	background-color:  rgb(117, 225, 131);
+	border: 0 !important;
+	border-radius: 1.2rem;
+}
+
+.btn-secondary {
+	background-color:  rgb(74, 86, 96) !important;
+	border: 0 !important;
+	border-radius: 1.2rem;
+}
+
+
+
+.btn[name="btnAddStudents"] {
+	border-radius: 1.2rem !important;
+	background-color: #ffffff;
+	color: #014D40;
+	padding: .5rem 1rem;
+	line-height: 1.5;
+	border-color: #6fadcb;
+}
+
+.btnConfirmDelete {
+	border-radius: 1.2rem !important;
+	background-color: #dc2c2c;
+	color: #f3f3f3;
+	border-color: #ff818c;
+}
+
+.btnConfirmDelete:hover {
+	background-color: #e75050;
+	color: #f3f3f3;
+}
+
+.btn[name="btnAddStudents"]:hover {
+	background-color: #f0f8ff;
+}
+
+.btnCloseModal {
+	border-radius: 1.2rem !important;
+	background-color: #fff;
+	color: rgb(19, 33, 78);
+	padding: .5rem 1rem;
+	line-height: 1.5;
+	border: none !important;
+}
+
+.btnCloseModal:focus {
+	box-shadow: none;
+}
+
+.btnCloseModal:hover {
+	font-weight: bold;
+}
+
+
+#btnAddNewProject, #btnAddNewProposedProject, #btnAddNewSupervisor, #btnAddNewCourse, .btnSaveModal {
+	border-radius: 1.2rem !important;
+	letter-spacing: 0.02rem;
+	background-image: linear-gradient(to top left,#50ffc8,#1b81ff);
+	color: #ffffff;
+	padding: .5rem 1.4rem;
+	line-height: 1.5;
+	border: none;
+	transition: all .15s;
+}
+
+#btnAddNewProject:hover, #btnAddNewProposedProject:hover, #btnAddNewSupervisor:hover, #btnAddNewCourse:hover, .btnSaveModal:hover  {
+	filter: opacity(0.9);
+	transform: translateY(-1px);
+	
+}
+
+span[name="studentNOProjectBadge"] {
+	border-radius: 1.2rem !important;
+	background-color: #f6f6f6;
+	color: #2b1b41;
+	border-color: #bfdef4;
+	line-height: 1.5;
+	padding: .5rem 1rem;
+	
+}
+
+
+.btn[name="studentProjectBadge"] {
+	border-radius: 1.2rem !important;
+	background-color: #F2EBFE;
+	color: #580A94;
+	border-color: #ece0ff;
+	line-height: 1.5;
+	padding: .5rem 1rem;
+	
+}
+
+.btn[name="studentProjectBadge"]:hover {
+	background-color: #DAC4FF;
+}
+
+.btn[name="btnEdit"] {
+	border-radius: 1.2rem !important;
+	background-color: #fff;
+	color: #0c72b7;
+	border-color: #0c72b7;
+	min-width: 6rem;
+}
+
+.btn[name="btnEdit"] i{
+	color: #4c87ae;
+}
+
+.btn[name="btnEdit"]:hover {
+	background-color: #cdebfd;
+}
+
+.btn[name="btnDelete"] {
+	border-radius: 1.2rem !important;
+	background-color: #fff;
+	color: #b0414b;
+	border-color: #b0414b;
+	min-width: 7rem;
+}
+
+.btn[name="btnDelete"] i{
+	color: #e4727c;
+}
+
+.btn[name="btnRemoveStudent"] {
+	border-radius: 1.2rem !important;
+	color: #b0414b;
+	font-size:0.9rem;
+	position: absolute;
+	top: 4.8rem;
+	right: 0.4rem;
+}
+
+.btn[name="btnRemoveStudent"]:hover
+{
+	background-color: #ffe9ef;
+}
+
+.btn[name="btnRemoveStudent"] > * {
+	pointer-events: none;
+}
+
+
+.btn[name="btnDelete"]:hover {
+	background-color: #ffe4eb;
+}
+
+h1 {
+	margin-top: 2.3em;
+	/* padding-bottom:0.5em; */
+/* 	background-color: white; */
+}
+
+h4 {
+	font-weight: 200;
+	margin: 0 0 0.8em 0;
+}
+
+.nav-item a:hover {
+	font-weight: 700;
+}
+
+@media (min-width: 1200px){
+	.navbar-dark .navbar-nav .nav-link.active {
+		color: #d0edff;
+		font-weight: 600;
+	}
+}
+
+
+.projectStatusBox label {
+	margin: 0.3rem 0 0.4rem 0;
+}
+
+.custom-file-label {
+	border-radius: 1.2rem;
+	overflow: hidden;
+	padding: 0.6rem 0.9rem;
+	height: 2.7rem;
+}
+
+
+input {
+	border-radius: 20px;
+}
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+input::-webkit-input-placeholder {
+	color: rgb(175, 175, 175) !important;
+	font-size: 0.8em;
+}
+
+
+.required .col-form-label:before {
+	content:"* ";
+	color:red;
+}
+
+
+.required label:before {
+	content:"* ";
+	color:red;
+}
+
+.avatar {
+	vertical-align: middle;
+	width: 45px;
+	height: 45px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+
+.navbar .nav-item{
+	margin-right: 1.1em;
+}
+
+.nav-tabs .nav-item{
+	margin-right: 0;
+	padding: 1rem 1.3rem;
+}
+
+.form-group{
+	justify-content: center;
+}
+.navbar {
+	background-color: rgb(35, 38, 41) !important; 
+}
+
+.navbar-nav > li > .dropdown-menu > .dropdown-item:focus {     
+	background-color: rgb(36, 168, 230);  
+}
+
+
+.navbar .nav-link {
+	padding: 0.3rem 1rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+	color: rgb(218, 218, 218);
+}
+
+.col-form-label, .col-sm-2{
+	border: 0px solid yellow;
+	width: auto !important;
+	text-align: right;
+
+}
+
+td, th {
+	vertical-align: middle !important;
+	border-bottom: 2px solid rgb(245, 247, 248) !important;
+	border-top: 0px solid white !important;
+	border-left:  0px solid white !important;
+}
+
+
+#mainTable {	
+	background-color: rgb(255, 255, 255);
+	border-radius: 10px;
+}
+
+#mainTable th:first-child ,#mainTable tr td:first-child {
+	padding-left: 40px !important;
+}
+
+#mainTable th:last-child ,#mainTable tr td:last-child{
+	padding-right: 40px !important;
+}
+
+th {
+	vertical-align:bottom !important;
+}
+
+.fht-cell {
+	padding: 20px;
+}
+
+.fixed-table-container {
+	border: 0px solid black !important;
+	clear: none !important;
+}
+
+.bootstrap-table {
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+	border-radius: 0.8rem;
+	background-color: #fff;
+	overflow: hidden;
+	padding: 1rem 0 0 0;
+}
+
+.fixed-table-pagination {
+	padding: 0.5rem 2.8rem;
+}
+
+#addStudentsModal .fixed-table-body {
+	box-shadow: none !important;
+	width: 100%;
+}
+
+#addStudentsModal .bootstrap-table {
+	padding-top: 0;
+}
+
+#addStudentsModal .fixed-table-toolbar .btn-group {
+	margin-top: 0.2rem;
+}
+
+#addStudentsModal .fixed-table-toolbar button {
+	padding: 0;
+}
+
+#studentsTable th[data-field="firstNameHeb"], #studentsTable th[data-field="lastNameHeb"]{
+	min-width: 10rem;
+}
+
+#studentsTable th[data-field="registrationYear"], #studentsTable th[data-field="registrationSemester"], #studentsTable th[data-field="studentId"] {
+	width: 8rem;
+}
+
+.page-list .dropdown-menu {
+	min-width: 0px !important; 
+	padding: 20px;
+	margin: 5px;
+	background: #dedfe0 !important;
+	
+}
+
+.page-list .dropup li a {
+	color: black !important;
+}
+
+.page-list .dropup li:not(:first-child) {
+	padding-top: 10px;
+	
+}
+
+.modal-header {
+	background-image: linear-gradient(45deg, #001a4c 0%, #3566c5 100%);
+	color: #fff;
+	border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.delete-header {
+	background-image: none;
+	background-color: #dc2c2c;
+}
+
+
+.modal-header .close{
+	margin: 0;
+	padding: 0;
+	color: #ffffff;
+}
+
+.modal-title{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.tab-pane {
+	padding: 0 1rem 1rem 1rem;
+}
+
+
+div[name="studentsList"] img{
+	border-radius: 50%;
+	width: 90px;
+	height: 90px;
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+	object-fit: cover;
+}
+
+.card-img-top {
+	
+	height: 200px;
+	object-fit: cover;
+  }
+
+.card {
+	/* color: rgb(236, 236, 236); */
+	border: solid 0px rgba(255, 255, 255, 0.5);
+	border-radius: 0.7rem ;
+	/* vertical-align: bottom !important; */
+}
+
+.card-title {
+	/* vertical-align: bottom !important; */
+}
+
+.hiddenColumn{
+	display: none;
+	visibility: hidden;
+	
+}
+
+.form-control {
+	height: 2.7rem;
+	border-radius: 1.2rem;
+}
+
+
+.custom-file-label::after {
+	height: 100%;
+	padding: 0.6rem 0.75rem;
+}
+
+tbody tr:hover {
+	/* background-color: rgba(253, 133, 253, 0.158) !important; */
+}
+
+.projectStatus {
+	margin-right: 8%;
+}
+
+.projectStatusStageName {
+	display: none;
+}
+
+@media (min-width: 1000px){
+	.projectStatus {
+		margin-right: 30%;
+	}
+	.projectStatusStageName {
+		display: inline;
+	}
+}
+
+.projectStatusNumber {
+	line-height: 3.5rem;
+	font-size: 1.2rem;
+	padding: 0 0.8rem 0 0;
+}
+
+
+
+.projectStatusNumber span{
+	vertical-align: middle;
+	position: absolute;
+	margin-top: 0.7rem;
+	color: #606060;
+}
+
+.projectStatusBox {
+	margin-right: 3.2rem;
+	border-radius: 0.5rem;
+	width: 55%;
+	padding: 0.6rem 0 0.6rem 0;
+	position: relative;
+}
+
+.projectStatusNumber .h2{
+	background-color: #e0e0e0;
+	color: #484040;
+	border-radius: 50%;
+	padding: 0.4rem 1rem;
+	margin-left: 1rem;
+	box-shadow: 0 0 0 8px #f4f4f4;
+	font-size: 1.6rem;
+}
+
+.projectStatusNumber.completed .h2{
+	background-color: #a8ffc2;
+	color: #0d733c;
+	box-shadow: 0 0 0 8px #d5ffe2;
+	animation-duration: 1.6s;
+	animation-name: statusCompletedAnimation;
+	animation-iteration-count: 1;
+}
+
+@keyframes statusCompletedAnimation {
+	from {
+		background-color: #ececec;
+		box-shadow: 0 0 0 20px #f4f4f4;
+	}
+	to {
+		background-color: #a8ffc2;
+		box-shadow: 0 0 0 8px #d5ffe2;
+	}
+  }
+
+.projectStatusContent {
+	border-right: 3px dashed #52525238;
+	margin-right: 2.2rem;
+	line-height: 2rem;
+	padding-top: 4rem;
+	padding-right: 0.5rem;
+}
+
+.custom-select {
+	border-radius: 1.2rem;
+	padding-left: 1rem;
+
+}
+
+.bootstrap-select ul li{
+	padding: 0.1rem 0;
+}
+
+.bootstrap-select .dropdown-menu {
+	border: 1px solid rgb(185, 185, 185);
+}
+
+.custom-control.custom-checkbox {
+	/* border-bottom: 1px solid rgba(128, 128, 128, 0.123); */
+	font-size: 1.2rem;
+	padding-right: 2.4rem;
+	
+}
+
+label.custom-control-label {
+  position: relative;
+  padding: 0.2rem 1.8rem 0.2rem 0;
+}
+
+label.custom-control-label::before, label.custom-control-label::after{
+  right: 0;
+  top: 0.5rem;
+  left: auto;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+	width: 100%;
+}
+
+.bootstrap-select button {
+	border-radius: 1.2rem;
+	height: 2.7rem;
+}
+
+.bootstrap-select .btn-light {
+	background-color: #ffffff;
+	border-color: #ced4da;
+}
+
+.studentsCourseIds{
+	left: -0.8rem;
+	background-color: #f6f9ff;
+}
+
+div[name="studentCard"] .bootstrap-select button {
+	height: 2.4rem;
+}
+
+
+.bootstrap-select .dropdown-toggle:focus {
+	outline: none !important;
+}
+
+.bootstrap-table img{
+	object-fit: cover;
+}
+
+.project-status-stage { 
+	border-radius: 7px;
+}
+
+#studentsTable .student-selected {
+	background-color: #C6F7E2;
+}
+
+.modal-content {
+	color: #000;
+	border:0;
+	border-radius: 0.5rem;
+}
+
+.modal-body .nav-tabs .nav-link.active {
+    font-weight:bold;
+    background-color: #e4f4ff;
+    border-bottom:3px solid #288cbe;
+    border-right: none;
+    border-left: none;
+	border-top: none;
+	border-radius: 0;
+	color: 000;
+}
+
+.modal-body .nav-tabs .nav-link:hover {
+	border-right: none;
+    border-left: none;
+	border-top: none;
+    font-weight: 700;
+}
+
+.modal-body .nav-tabs .nav-link {
+	color: #212321;
+	font-weight: 500;
+	border: 0px solid transparent;
+}
+
+.round-checkbox
+{
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	display: inline-block;
+	position: relative;
+	background-color: #c3c3c3;
+	color:#095436;
+	top: 7px;
+	height: 1.3rem;
+	width: 1.3rem;
+	border: 0;
+	border-radius: 50px;
+	cursor: pointer;     
+	margin-right: 2.5rem;
+	outline: none;
+	box-shadow: 0 0 0 5px #e6e6e6;
+}
+.round-checkbox:checked::before
+{
+     position: absolute;
+     font: 1rem/1 'Segoe UI', 'Open Sans', sans-serif;
+     left: 6px;
+     top: 1px;
+     content: '\02143';
+	 transform: rotate(40deg);
+}
+.round-checkbox:hover
+{
+	 /* background-color: #f7f7f7; */
+	 filter:  brightness(0.95);
+}
+.round-checkbox:checked
+{
+	background-color: #a8d7ff;
+	box-shadow: 0 0 0 5px #daf1ff;
+}
+.projectStatus label
+{
+	color: rgb(36, 36, 36);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	cursor: pointer;
+	padding-right: 0.8rem;
+	vertical-align: middle;
+} 
+.tip {
+	width: 0px;
+	height: 0px;
+	position: absolute;
+	background: transparent;
+	border: 20px solid #ececec;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent; 
+  }
+
+.largerPicFitScreen {
+	width: intrinsic;           /* Safari/WebKit */
+	width: -moz-max-content;    /* Firefox/Gecko */
+	width: -webkit-max-content;
+}
+
+.seePoster {
+	width: 9rem;
+    height: 9rem;
+    padding: 2rem;
+    text-align: center;
+    color: #fafafa !important;
+    background-color: #2f5ec9;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	transition: all .15s ease-in-out;
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,0.5)!important
+}
+
+.seePoster:hover {
+	background-color: #1843a8;
+	text-decoration: none;
+}
+
+  /* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	/* float:right; */
+	vertical-align: middle;
+  }
+
+  /* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 25px;
+  width: 25px;
+  left: 4px;
+  bottom: 5px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input.default:checked + .slider {
+  background-color: #444;
+}
+input.primary:checked + .slider {
+  background-color: #0790f4;
+}
+input.info:checked + .slider {
+  background-color: #3de0f5;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+
+/* -----------------------------  Snackbar -----------------------------*/
+.snackbar {
+	visibility: hidden;
+	min-width: 250px;
+	margin-left: -125px;
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	border-radius: 2px;
+	padding: 16px;
+	position: fixed;
+	z-index: 1;
+	left: 50%;
+	bottom: 30px;
+	font-size: 17px;
+  }
+  
+  .snackbar-failure {
+	background-color: #ff4040;
+  }
+
+  .snackbar.show {
+	visibility: visible;
+	-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+  
+  @-webkit-keyframes fadein {
+	from {bottom: 0; opacity: 0;} 
+	to {bottom: 30px; opacity: 1;}
+  }
+  
+  @keyframes fadein {
+	from {bottom: 0; opacity: 0;}
+	to {bottom: 30px; opacity: 1;}
+  }
+  
+  @-webkit-keyframes fadeout {
+	from {bottom: 30px; opacity: 1;} 
+	to {bottom: 0; opacity: 0;}
+  }
+  
+  @keyframes fadeout {
+	from {bottom: 30px; opacity: 1;}
+	to {bottom: 0; opacity: 0;}
+  }
+
+  /* ----------------------------- End of snackbar ----------------------------- */

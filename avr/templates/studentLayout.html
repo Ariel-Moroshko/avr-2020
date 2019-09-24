@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block navbar %}
+	<a class="navbar-brand px-4" href="{{ url_for('index') }}">
+		<img src="/static/images/headLogo.png" style="max-height: 30px;vertical-align: top; margin-right: 0.3rem;"/>	
+		AVR Lab 
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		{% if student %}
+			<div class="navbar-container">
+				{% if student.profilePic %}
+					<img src="/static/images/profile/{{ student.profilePic }}" alt="student profile" style="height: 40px; width: 40px; object-fit: cover; border-radius: 50%">
+				{% else %}
+					<img src="/static/images/profile/default.png" alt="default profile" style="height: 40px; width: 40px; object-fit: cover; border-radius: 50%">
+				{% endif %}
+			</div>
+		{% endif %}
+		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			{% if student %}
+				<li class="nav-item dropdown my-2 my-lg-0">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{{ student.firstNameEng }} {{ student.lastNameEng }}
+					</a>
+					<div class="dropdown-menu " aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="{{ url_for('home') }}">My Projects</a>
+						<a class="dropdown-item" href="{{ url_for('editAccount') }}">Edit Account</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
+					</div>
+				</li>
+			{% endif %}
+			<li class="nav-item">
+				<a class="nav-link" href="{{ url_for('index') }}">Home</a>
+			</li>
+			<li class="nav-item">
+                <a class="nav-link" href="{{ url_for('home') }}">My Projects</a>
+			</li>			
+		</ul>
+    </div>
+{% endblock navbar %}
+
+{% block navScript %} 
+<script>
+    // underline current page in navbar
+    $(function(){
+        $('.navbar-nav a.nav-link').each(function(){
+            if ($(this).prop('href') == window.location.href) {
+                $(this).addClass('active'); 
+            }
+        });
+    });
+</script>
+{% endblock navScript %}

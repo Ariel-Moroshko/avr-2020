@@ -1,0 +1,182 @@
+{% extends "studentLayout.html" %} 
+{% block styles %}
+<style>
+    .submitForm, .btnSendingForm {
+        width: 100%;
+        font-size: 1.1rem;
+        background-color: #0f2739;
+        color: #fff;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    .submitForm:hover {
+        background-color: #2f4555;
+        color: #fff;
+    }
+
+    .btnSendingForm:hover {
+        color: #fff;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0}
+        to {opacity: 1}
+    }
+
+    .fadeInAnimated {
+        opacity: 0;
+        animation: fadeIn 0.4s forwards;
+    }
+</style>
+{% endblock styles %}
+
+{% block content %}
+
+<div class="pageTitle">
+    <nav aria-label="breadcrumb" id="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; padding: 0rem 3rem;">
+            <li class="breadcrumb-item"><a href="/home">My Projects</a></li>
+            <li class="breadcrumb-item"><a href="/ProjectStatus/{{ project.id }}">{{ project.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Send Poster</li>
+        </ol>
+    </nav>
+    <h1>Send Poster</h1>
+</div>
+
+<div class="container mt-5 fadeInAnimated">
+    {% if not isStudentEnrolledInProject or not allowedToSend %}
+		<div class="col-sm-7 mx-auto" style="margin-top:3em">
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">
+                            {{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+		</div>
+
+	{% else %}
+		
+        <div id="messages" class="col-sm-7 mx-auto">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <div class="shadow bg-white mt-4 col-md-6 mx-auto" style="border-radius: 0.8rem;">
+            <form class="form" id="posterForm" method="POST" action="" enctype="multipart/form-data">
+                {{ posterForm.hidden_tag() }}
+                <div class="row justify-content-center text-left pt-5">
+                    <div class="col-12 col-md-10 my-auto required">
+                        {{ posterForm.poster.label(class="font-weight-bold") }} 
+                    </div>
+                    <div class="col-12 col-md-10">
+                        {{ posterForm.poster(class="custom-file-input") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"><small>Allowed: pdf</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                        <label class="custom-file-label text-left ml-md-3 mx-3" for="poster">Choose file</label> 
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-5 text-center">
+                    {{ posterForm.submitForm(class="btn shadow py-3 submitForm mt-3") }}
+                    <button id="btnSendingForm" class="btn shadow py-3 mt-3 btnSendingForm" type="button" style="display: none;" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle;" aria-hidden="true"></span>
+                        <span class="ml-1">Sending...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    {% endif %}
+	
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    {% if isStudentEnrolledInProject and allowedToSend %}
+    /* show file name in the input box when selecting a file */
+    $('#poster').on('change',function(){
+        let fileName = $(this).val().split('\\').pop(); 
+        $(this).closest("div").find(".custom-file-label").html(fileName);
+    })
+
+    function handleFormResponse(response) {
+        $("#posterForm div[name='infoText']").each(function() {
+            $(this).fadeIn();
+        })
+        if (response['status'] == 'error') {
+            $("#btnSendingForm").hide();
+            $("#submitForm").show();
+            $("div#messages").append(`<div class="alert alert-danger">There was an error, see details below.</div>`)
+            for(let field in response['errors']) {
+                if (field == "csrf_token") {
+                    $("div#messages").append(`<div class="alert alert-danger">CSRF token expired, please reload the page.</div>`)
+                }
+                else {
+                    $(`#${field}`).addClass("is-invalid");
+                    $(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+                    $(`#${field}`).parent().find(`div[name='infoText']`).hide();
+                    for (let error of response['errors'][field]) {
+                        $(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+                    }
+                    $(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+                }
+            }
+        }
+        else if (response['status'] == 'notAllowed') {
+            $("#btnSendingForm").hide();
+            $("#submitForm").show();
+            $("div#messages").append(`<div class="alert alert-danger">Error: you are currently not allowed to send poster.</div>`)
+        }
+        else if (response['status'] == 'fileTooLarge') {
+            $("#btnSendingForm").hide();
+            $("#submitForm").show();
+            $("div#messages").append(`<div class="alert alert-danger">Error: the file you are trying to send is too large.</div>`)
+        }
+        else if (response['status'] == 'success') {
+            let redirectURL = window.location.pathname.split("/");
+            redirectURL.pop();
+            redirectURL = redirectURL.join("/");
+            window.location.replace(redirectURL);
+        }
+    }
+    
+    $("#posterForm").submit(function( event ) {
+        event.preventDefault();
+        $("#submitForm").hide();
+        $("#btnSendingForm").show();
+        $("div#messages").empty();
+        $("#posterForm .is-invalid").each(function() {
+            $(this).removeClass("is-invalid");
+        })
+
+        let formData = new FormData(document.getElementById("posterForm"));
+        sendFormAjax(formData);
+    });
+
+    function sendFormAjax(formData) {
+        fetch(window.location.href, {
+            method: "post",
+            body: formData
+        })
+        .then((response) => response.json())
+        .then((response) => handleFormResponse(response))
+        .catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    {% endif %}
+</script>
+{% endblock scripts %}

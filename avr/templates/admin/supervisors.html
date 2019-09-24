@@ -1,0 +1,507 @@
+{% extends "admin/adminLayout.html" %} 
+{% block styles %} 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+	<style>
+		.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, 
+		.pagination>.active>span:hover, .pagination>.active>a:focus, 
+		.pagination>.active>span:focus {
+			font-weight: bold;
+		}
+
+		#mainTable th[data-field="btnEdit"]{
+			min-width: 6rem;
+		}
+
+		#mainTable td {
+			padding: 10px !important;
+		}
+
+		/* #### fix for page content shifting left when opening modal #### */
+		.modal {
+			overflow-y: auto;
+		}
+		.modal-open {
+			overflow: auto;
+		}
+		.modal-open[style] {
+			padding-right: 0px !important;
+        }
+
+        label {
+            margin-bottom: 0;
+        }
+        
+        @media (min-width: 992px){ 
+			#addSupervisorModal .modal-lg, #editSupervisorModal .modal-lg {
+				max-width: 580px;
+			}
+		}
+
+	</style>
+{% endblock styles %} 
+{% block content %}
+<h1>Supervisors</h1>
+<div class="container mt-4">
+	{% with messages = get_flashed_messages(with_categories=true) %} 
+		{% if messages %} 
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }} mt-4">
+					{{ message }}
+				</div>
+			{% endfor %} 
+		{% endif %} 
+	{% endwith %}
+	
+	<table id="mainTable" data-toggle="table" data-search="false" data-pagination="true" data-filter-control="true" data-show-export="false" data-click-to-select="true" data-toolbar="#toolbar" data-pagination-v-align="bottom" data-strict-search="true" data-sort-order="asc" data-sort-name="status" data-url="/Admin/Supervisors/json" data-side-pagination="server">
+		<thead>
+			<tr>
+				<th data-field="status" data-filter-control="select" data-sortable="true">Status</th>
+				<th data-field="supervisorId" data-sortable="true">ID</th>
+				<th data-field="firstNameHeb" data-sortable="true">First Name</th>
+				<th data-field="lastNameHeb" data-sortable="true">Last Name</th>
+				<th data-field="email">Email</th>
+				<th data-field="btnEdit"></th>
+				<th data-field="btnDelete">
+					<button type="button" id="btnAddNewSupervisor" class="btn shadow"  data-toggle="modal" data-target="#addSupervisorModal"><i class="fas fa-plus"></i> New</button>
+				</th>
+			</tr>
+		</thead>
+	</table>
+	
+
+	<div class="modal fade bg" id="addSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="color: #000;">
+				<div class="modal-header" style="display: block;">
+					<span style="font-size:1.1rem">Add Supervisor</span>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div id="addSupervisorMessages" name="errorMessage" style="display: none;">
+				</div>
+				<form class="form" id="addSupervisorForm" method="POST" action="{{ url_for('manageSupervisors') }}">
+					<input type="hidden" name="sentFormName" value="addSupervisorForm">
+					<div class="modal-body pb-4 mx-md-5">
+                        {{ addForm.hidden_tag() }}
+                        <div class="text-md-left pb-3">
+                            <div class="row mt-3">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newSupervisorId.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newSupervisorId(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4 border-bottom pb-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newEmail.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newEmail(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newFirstNameHeb.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newFirstNameHeb(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newLastNameHeb.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newLastNameHeb(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newFirstNameEng.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newFirstNameEng(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4 border-bottom pb-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newLastNameEng.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newLastNameEng(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newPhone.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newPhone(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                             <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ addForm.newStatus.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ addForm.newStatus(class="custom-select form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btnCloseModal" data-dismiss="modal">Close</button>
+						{{ addForm.submitAddForm(class="btn btn-primary") }}
+						<button id="btnSendingAddSupervisorForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+							<span class="ml-1">Adding...</span>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade bg" id="editSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="editSupervisorModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="color: #000;">
+				<div class="modal-header" style="display: block;">
+					<span name="editSupervisorTitle" style="font-size:1.1rem"></span>
+					<button type="button" class="close p-0 m-0" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true" style="color: #ffffff;">×</span>
+					</button>
+				</div>
+				<div id="editSupervisorMessages" name="errorMessage" style="display: none;">
+				</div>
+				<form class="form" id="editSupervisorForm" method="POST" action="{{ url_for('manageSupervisors') }}">
+                    <input type="hidden" name="sentFormName" value="editSupervisorForm">
+                    <div class="modal-body pb-4 mx-md-5">
+                        {{ editForm.hidden_tag() }}
+                        <div class="text-md-left pb-3">
+                            <div class="row mt-3">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.supervisorId.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.supervisorId(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4 border-bottom pb-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.email.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.email(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.firstNameHeb.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.firstNameHeb(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.lastNameHeb.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.lastNameHeb(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.firstNameEng.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.firstNameEng(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4 border-bottom pb-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.lastNameEng.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.lastNameEng(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.phone.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.phone(class="form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                             <div class="row mt-4">
+                                <div class="col-12 my-auto col-md-4">
+                                    {{ editForm.status.label(class="font-weight-bold") }}
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    {{ editForm.status(class="custom-select form-control") }} 
+                                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btnCloseModal" data-dismiss="modal">Cancel</button>
+						{{ editForm.submitEditForm(class="btn btn-primary") }}
+						<button id="btnSendingEditSupervisorForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+							<span class="ml-1">Saving...</span>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="deleteSupervisorModal" tabindex="-1" role="dialog" aria-labelledby="deleteSupervisorModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header delete-header">
+					<h5 class="modal-title" id="deleteSupervisorModalLabel">Delete Supervisor</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Are you sure?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btnCloseModal" data-dismiss="modal">No</button>
+					<button type="button" onclick='document.getElementById("deleteForm").submit()' class="btn btnConfirmDelete px-3">Yes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<form id="deleteForm" method="POST" action="{{ url_for('manageSupervisors') }}/Delete">
+		{{ deleteForm.hidden_tag() }}
+	</form>
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+<!-- script to display the filename when choosing a profile picture -->
+{% endblock content %}
+
+{% block scripts %}
+	<script src="../static/js/bootstrap-table.js"></script>
+	<script src="../static/js/bootstrap-table-filter-control.js"></script>
+
+	<script>
+		function getSupervisorData(id) {
+			var xmlhttp = new XMLHttpRequest();
+			var url = "/Admin/Supervisors/"+id+"/json";
+			xmlhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					var data = JSON.parse(this.responseText);
+					editSupervisor(data);		
+				}
+			};
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send();
+		}
+
+		$('#editSupervisorModal').on('shown.bs.modal', function () {
+			let supervisorId = $("#editSupervisorForm #id").val();
+			let button = $(`button[name='btnEdit'][data-supervisor-id='${supervisorId}']`);
+			button.find("span[name='loading']").hide();
+			button.find("i").show();
+			button.attr("disabled", false);
+		});	
+
+
+		function editSupervisor(supervisorData) {			
+			$("#editSupervisorForm").find("#id").val(supervisorData.id);
+			$("#editSupervisorForm").find("#supervisorId").val(supervisorData.supervisorId);
+			$("#editSupervisorForm").find("#email").val(supervisorData.email);
+			$("#editSupervisorForm").find("#firstNameEng").val(supervisorData.firstNameEng);
+			$("#editSupervisorForm").find("#lastNameEng").val(supervisorData.lastNameEng);
+			$("#editSupervisorForm").find("#firstNameHeb").val(supervisorData.firstNameHeb);
+			$("#editSupervisorForm").find("#lastNameHeb").val(supervisorData.lastNameHeb);
+			$("#editSupervisorForm").find("#phone").val(supervisorData.phone);
+			$("#editSupervisorForm").find("#status").val(supervisorData.status);
+			$("#editSupervisorModal span[name='editSupervisorTitle']").html(`Editing<span class='mx-2'>•</span>${supervisorData.firstNameEng} ${supervisorData.lastNameEng}`);
+
+			$("#editSupervisorModal").modal("show");
+		}
+
+		function deleteSupervisor(id){
+			$("#deleteForm").find('#deleteSupervisorId').val(id);
+		}
+
+		$("#mainTable").on('load-success.bs.table', function(){
+			$("button[name='btnEdit']").on("click", function() {
+				$(this).find("i").hide();
+				$(this).find("span[name='loading']").show();
+				$(this).attr("disabled", true);
+			})
+		});
+
+
+		/* ############################ 	Send form with ajax		############################ */
+		function handleEditFormResponse(response) {			
+			if (response['status'] == 'error') {
+				$("#btnSendingEditSupervisorForm").hide();
+				$("#submitEditForm").show();
+				$("div#editSupervisorMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+				for(let field in response['errors']) {
+					if (field == "csrf_token") {
+						$("div#editSupervisorMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+					}
+					else {
+						$(`#${field}`).addClass("is-invalid");
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+						for (let error of response['errors'][field]) {
+							$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+						}
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+					}
+				}
+				$("div#editSupervisorMessages").fadeIn();
+				$("#editSupervisorModal").animate({ scrollTop: 0 }, 600);
+				
+			}
+			else if (response['status'] == 'supervisorIdNotFound') {
+				$("#btnSendingEditSupervisorForm").hide();
+				$("#submitEditForm").show();
+				$("div#editSupervisorMessages").append(`<div class="alert alert-danger m-0">Error: couldn't find supervisor with id '${response['id']}' in the db.</div>`);
+				$("div#editSupervisorMessages").fadeIn();
+				$("#editSupervisorModal").animate({ scrollTop: 0 }, 600);
+			}
+			else if (response['status'] == 'success') {
+				let redirectURL = window.location.pathname;
+				window.location.replace(redirectURL);
+			}
+		}
+
+		function handleAddFormResponse(response) {			
+			if (response['status'] == 'error') {
+				$("#btnSendingAddSupervisorForm").hide();
+				$("#submitAddForm").show();
+				$("div#addSupervisorMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+				for(let field in response['errors']) {
+					if (field == "csrf_token") {
+						$("div#addSupervisorMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+					}
+					else {
+						$(`#${field}`).addClass("is-invalid");
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+						for (let error of response['errors'][field]) {
+							$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+						}
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+					}
+				}
+				$("div#addSupervisorMessages").fadeIn();
+				$("#addSupervisorModal").animate({ scrollTop: 0 }, 600);
+				
+			}
+
+			else if (response['status'] == 'success') {
+				let redirectURL = window.location.pathname;
+				window.location.replace(redirectURL);
+			}
+		}
+
+		function sendEditFormAjax(formData) {
+			fetch(window.location.href, {
+				method: "post",
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((response) => handleEditFormResponse(response))
+			.catch(function (error) {
+				console.log(error);
+			})
+		}
+
+		function sendAddFormAjax(formData) {
+			fetch(window.location.href, {
+				method: "post",
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((response) => handleAddFormResponse(response))
+			.catch(function (error) {
+				console.log(error);
+			})
+		}
+
+		
+		$("#editSupervisorForm").submit(function( event ) {
+			event.preventDefault();
+			$("#editSupervisorForm .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+			$("div#editSupervisorMessages").empty();
+			$("div#editSupervisorMessages").hide();
+			$("#submitEditForm").hide();
+			$("#btnSendingEditSupervisorForm").show();
+			let formData = new FormData(document.getElementById("editSupervisorForm"));
+			sendEditFormAjax(formData);
+		});
+
+
+		$("#addSupervisorForm").submit(function( event ) {
+			event.preventDefault();
+			$("#addSupervisorForm .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+			$("div#addSupervisorMessages").empty();
+			$("div#addSupervisorMessages").hide();
+			$("#submitAddForm").hide();
+			$("#btnSendingAddSupervisorForm").show();
+			let formData = new FormData(document.getElementById("addSupervisorForm"));
+			sendAddFormAjax(formData);
+		});
+
+		/* ######################## 	END OF Send form with ajax		#########################*/
+
+
+		$('#editSupervisorModal').on('hide.bs.modal', function() {
+			$("#editSupervisorModal div[name='errorMessage']").hide();
+			$("#editSupervisorModal .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+		});
+
+	</script>
+
+{% endblock scripts %}

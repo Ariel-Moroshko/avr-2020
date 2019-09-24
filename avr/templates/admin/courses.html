@@ -1,0 +1,585 @@
+{% extends "admin/adminLayout.html" %} 
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+<style>
+	.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, 
+	.pagination>.active>span:hover, .pagination>.active>a:focus, 
+	.pagination>.active>span:focus {
+		font-weight: bold;
+	}
+	#mainTable th[data-field="btnEdit"]{
+		min-width: 6rem;
+	}
+
+	#mainTable th[data-field="number"]{
+		min-width: 12rem;
+	}
+
+	#mainTable th[data-field="name"]{
+		min-width: 24rem;
+	}
+	
+	#mainTable td {
+		padding: 10px !important;
+	}
+
+	#mainTable .fht-cell input {
+		margin-left: -0.8rem;
+	}
+
+	/* #### fix for page content shifting left when opening modal #### */
+	.modal {
+   		overflow-y: auto;
+	}
+	.modal-open {
+		overflow: auto;
+	}
+	.modal-open[style] {
+		padding-right: 0px !important;
+	}
+
+	.academicPointsSelect {
+		margin-top: 1.5rem;
+	}
+
+	.academicPoint {
+		border: 2px solid #dee3ea; 
+		width: 5.5rem;
+		height: 5rem;
+		border-radius: 1rem;
+		font-size: 1.2rem;
+		cursor: pointer;
+		display: flex;
+    	justify-content: center;
+		align-items: center;
+		margin: 0.5rem 0.5rem;
+		position: relative;
+		transition: border-color .15s ease-in-out;
+	}
+
+	.academicPoint:hover {
+		border-color: #83e8df;
+	}
+
+	.academicPoint-selected {
+		background-color: #ecfffc;
+    	border-color: #83e8df;
+	}
+
+	.academicPoint .selectedCircle {
+		position: absolute;
+		top: -0.8rem;
+		right: -0.4rem;
+		font-size: 1.2rem;
+		display: none;
+	}
+	
+	.academicPoint .academicPointNum {
+		vertical-align: middle;
+	}
+
+	.isDefaultFlag {
+		cursor: pointer;
+		padding: 0.5rem;
+		color: #dadada;
+		font-size: 1.3rem;
+	}
+
+	.isDefaultFlag i:hover{
+		color: #538bf4;
+		transition: all 0.15s ease-in-out;
+	}
+
+	@media (min-width: 992px){ 
+		#addNewCourseModal .modal-lg, #editCourseModal .modal-lg{
+			max-width: 600px;
+		}
+	}
+
+	@media (min-width: 1200px){
+		.container {
+			max-width: 1200px;
+		}
+	}
+    
+</style>
+{% endblock styles %}
+{% block content %}
+<h1>Courses</h1>
+<div class="container mt-4">
+	{% with messages = get_flashed_messages(with_categories=true) %} 
+		{% if messages %} 
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }} mt-4">
+					{{ message }}
+				</div>
+			{% endfor %} 
+		{% endif %} 
+	{% endwith %}
+
+	
+	<table id="mainTable" data-toggle="table" data-search="false" data-pagination="true" data-filter-control="true" data-show-export="false" data-click-to-select="true" data-toolbar="#toolbar" data-pagination-v-align="bottom" data-strict-search="false" data-sort-order="asc" data-sort-name="number" data-url="/Admin/Courses/json" data-side-pagination="server">
+        <thead>
+            <tr>
+                <th data-field="number"  data-sortable="true" data-filter-control="input">Number</th>
+                <th data-field="name" data-align="left" data-sortable="true" data-filter-control="input">Name</th>
+				<th data-field="academicPoints" data-sortable="true">Academic Points</th>
+				<th data-field="btnDefault" data-sortable="false">Is Default</th>
+                <th data-field="btnEdit"></th>
+                <th data-field="btnDelete">
+                    <button type="button" id="btnAddNewCourse" class="btn shadow" data-toggle="modal" data-target="#addNewCourseModal"><i class="fas fa-plus"></i> New</button>
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+
+	<div class="modal fade bg" id="editCourseModal" tabindex="-1" role="dialog" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content" style="color: #000;">
+					<div class="modal-header">
+						<div class="modal-title">
+							<span name="courseTitle" style="font-size:1.1rem"></span>
+						</div>
+						<button type="button" class="close p-0 m-0" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true" style="color: #ffffff;">×</span>
+						</button>
+					</div>
+					<div id="editCourseMessages" name="errorMessage" style="display: none;"></div>
+					<form class="form" id="editCourseForm" method="POST" action="{{ url_for('manageCourses') }}" enctype="multipart/form-data">
+						<input type="hidden" name="pageForm" value="editCourseForm">
+						<div class="modal-body p-4 px-2 px-md-5">
+							{{ editForm.hidden_tag() }}	
+							<div class="text-md-left pb-4 mt-3">
+								<div class="row">
+									<div class="col-12 my-auto col-md-3">
+										{{ editForm.name.label(class="font-weight-bold") }}
+									</div>
+									<div class="col-12 col-md-9">
+										{{ editForm.name(class="form-control") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+								</div>
+							
+								<div class="row mt-4">
+									<div class="col-12 my-auto col-md-3">
+										{{ editForm.number.label(class="font-weight-bold") }}
+									</div>
+									<div class="col-12 col-md-9">
+										{{ editForm.number(class="form-control") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+								</div>    
+                                
+								<div class="row academicPointsSelect justify-content-center" style="margin-top: 2.5rem;">
+									<div class="col-12">
+										<label class="font-weight-bold" style="margin-bottom: 1rem">Academic Points <small class="ml-3">(choose only one option)</small></label>
+										{{ editForm.academicPoints(class="custom-select form-control d-none") }}
+									</div>
+									<div name="oneAcademicPoint" data-points="1" class="font-weight-bold shadow-sm academicPoint">
+										<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+										<span class="academicPointNum">1</span>
+									</div>
+									<div name="twoAcademicPoints" data-points="2" class="font-weight-bold shadow-sm academicPoint">
+										<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+										<span class="academicPointNum">2</span>
+									</div>
+									<div name="threeAcademicPoints" data-points="3" class="font-weight-bold shadow-sm academicPoint">
+										<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+										<span class="academicPointNum">3</span>
+									</div>
+									<div name="fourAcademicPoints" data-points="4" class="font-weight-bold shadow-sm academicPoint">
+										<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+										<span class="academicPointNum">4</span>
+									</div>
+									<div name="fiveAcademicPoints" data-points="5" class="font-weight-bold shadow-sm academicPoint">
+										<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+										<span class="academicPointNum">5</span>
+									</div>
+								</div>
+								
+                            </div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btnCloseModal" data-dismiss="modal">Cancel</button>
+							{{ editForm.submitEditForm(class="btn btn-primary") }}
+							<button id="btnSendingEditCourseForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+								<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								<span class="ml-1">Saving...</span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+	<div class="modal fade bg" id="addNewCourseModal" tabindex="-1" role="dialog" aria-labelledby="addNewCourseModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addNewCourseModalLabel">Add New Course</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div id="addCourseMessages" name="errorMessage" style="display: none;"></div>
+				<form id="addCourseForm" method="POST" action="{{ url_for('manageCourses') }}" enctype="multipart/form-data">
+					<input type="hidden" name="pageForm" value="addCourseForm">
+					<div class="modal-body p-4 px-2 px-md-5">
+						{{ addForm.hidden_tag() }}
+						<div class="text-md-left pb-4 mt-3">
+							<div class="row">
+								<div class="col-12 my-auto col-md-3">
+									{{ addForm.newName.label(class="font-weight-bold") }}
+								</div>
+								<div class="col-12 col-md-9">
+									{{ addForm.newName(class="form-control") }} 
+									<div name="invalidFeedback" class="invalid-feedback"></div>
+								</div>
+							</div>
+						
+							<div class="row mt-4">
+								<div class="col-12 my-auto col-md-3">
+									{{ addForm.newNumber.label(class="font-weight-bold") }}
+								</div>
+								<div class="col-12 col-md-9">
+									{{ addForm.newNumber(class="form-control") }} 
+									<div name="invalidFeedback" class="invalid-feedback"></div>
+								</div>
+							</div>
+						
+							<div class="row academicPointsSelect justify-content-center" style="margin-top: 2.5rem;">
+								<div class="col-12">
+									<label class="font-weight-bold" style="margin-bottom: 1rem">Academic Points <small class="ml-3">(choose only one option)</small></label>
+									{{ addForm.newAcademicPoints(class="custom-select form-control d-none") }}
+								</div>
+								<div name="oneAcademicPoint" data-points="1" class="font-weight-bold shadow-sm academicPoint">
+									<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+									<span class="academicPointNum">1</span>
+								</div>
+								<div name="twoAcademicPoints" data-points="2" class="font-weight-bold shadow-sm academicPoint">
+									<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+									<span class="academicPointNum">2</span>
+								</div>
+								<div name="threeAcademicPoints" data-points="3" class="font-weight-bold shadow-sm academicPoint">
+									<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+									<span class="academicPointNum">3</span>
+								</div>
+								<div name="fourAcademicPoints" data-points="4" class="font-weight-bold shadow-sm academicPoint">
+									<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+									<span class="academicPointNum">4</span>
+								</div>
+								<div name="fiveAcademicPoints" data-points="5" class="font-weight-bold shadow-sm academicPoint">
+									<span class="selectedCircle"><i class="fas fa-check-circle"></i></span>
+									<span class="academicPointNum">5</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btnCloseModal" data-dismiss="modal">Close</button>
+						{{ addForm.submitAddForm(class="btn btn-primary") }}
+						<button id="btnSendingAddCourseForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+							<span class="ml-1">Adding...</span>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="snackbars">
+	</div>
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+
+<div class="modal fade" id="deleteCourseModal" tabindex="-1" role="dialog" aria-labelledby="deleteCourseModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header delete-header">
+				<h5 class="modal-title" id="deleteCourseModalLabel">Delete Course</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Are you sure?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btnCloseModal" data-dismiss="modal">No</button>
+				<button type="button" onclick='document.getElementById("deleteForm").submit()' class="btn btnConfirmDelete px-3">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="deleteForm" method="POST" action="{{ url_for('manageCourses') }}">
+	<input type="hidden" name="pageForm" value="deleteCourseForm">
+	{{ deleteForm.hidden_tag() }}
+</form>
+
+<div id="snackbars">
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="../static/js/bootstrap-table.js"></script>
+<script src="../static/js/bootstrap-table-filter-control.js"></script>
+
+<script>
+	
+	function getCourseData(id) {
+		var xmlhttp = new XMLHttpRequest();
+		var url = "/Admin/Courses/"+id+"/json";
+		xmlhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var data = JSON.parse(this.responseText);
+				editCourse(data);		
+			}
+		};
+		xmlhttp.open("GET", url, true);
+		xmlhttp.send();
+	}
+
+	$('#editCourseModal').on('shown.bs.modal', function () {
+		let courseId = $("#editCourseForm #courseId").val();
+		let button = $(`button[name='btnEdit'][data-course-id='${courseId}']`);
+		button.find("span[name='loading']").hide();
+		button.find("i").show();
+		button.attr("disabled", false);
+	});	
+
+	function editCourse(courseData) {	
+        resetAcademicPoints();
+        if(courseData.academicPoints == 1) {
+            $("#editCourseForm div[name='oneAcademicPoint']").click();
+        }
+        else if(courseData.academicPoints == 2) {
+            $("#editCourseForm div[name='twoAcademicPoints']").click();
+        }
+        else if(courseData.academicPoints == 3) {
+            $("#editCourseForm div[name='threeAcademicPoints']").click();
+        }
+        else if(courseData.academicPoints == 4) {
+            $("#editCourseForm div[name='fourAcademicPoints']").click();
+        }
+        else if(courseData.academicPoints == 5) {
+            $("#editCourseForm div[name='fiveAcademicPoints']").click();
+        }
+		$("#editCourseModal .modal-header span[name='courseTitle']").html(`Editing<span class='mx-2'>•</span>`+courseData.name);
+		$("#editCourseForm #courseId").val(courseData.id);
+		$("#editCourseForm #number").val(courseData.number);
+		$("#editCourseForm #name").val(courseData.name);
+		
+		$("#editCourseModal").modal("show");
+	}
+
+	function deleteCourse(id){
+		$("#deleteForm").find('#deleteCourseId').val(id);
+    }
+
+    function resetAcademicPoints(form) {
+		$(`#${form} .academicPoint-selected`).each(function() {
+			$(this).toggleClass("academicPoint-selected");
+			$(this).find("span.selectedCircle").hide();
+		});
+	}
+
+    
+    $("#editCourseForm .academicPoint").click(function() {
+        let selectedPoints = $(this).data("points");
+        $("#academicPoints").val(selectedPoints);
+        resetAcademicPoints("editCourseForm");
+		$(this).toggleClass("academicPoint-selected");
+		$(this).find("span.selectedCircle").fadeToggle(60);
+	});
+
+	$("#addCourseForm .academicPoint").click(function() {
+        let selectedPoints = $(this).data("points");
+        $("#newAcademicPoints").val(selectedPoints);
+        resetAcademicPoints("addCourseForm");
+		$(this).toggleClass("academicPoint-selected");
+		$(this).find("span.selectedCircle").fadeToggle(60);
+	});
+
+	var snackbarCounter = 0;
+	$("#mainTable").on('load-success.bs.table', function(){
+		$("button[name='btnEdit']").on("click", function() {
+			$(this).find("i").hide();
+			$(this).find("span[name='loading']").show();
+			$(this).attr("disabled", true);
+		})
+
+		$("span[name='isDefaultFlag']").on("click", function() {
+			if( $(this).find("i").hasClass("selected") ) {
+				return;
+			}
+			let currentFlag = this;
+			$.post("/Admin/Courses/UpdateDefaultCourse", {	
+				courseId: $(this).data("courseId")
+			}).done(function(answer) {
+				let snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar'>Updated successfully!</div>`);
+				if (answer.result !== "ok") {
+					snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar snackbar-failure'>Update failed: unknown course id.</div>`);
+				}
+				else {
+					$("#mainTable span[name='isDefaultFlag']").each(function() {
+						$(this).html(`<i class="far fa-flag"></i>`);
+						$(this).find("i").removeClass("selected");
+					});
+					$(currentFlag).html(`<i class="fas fa-flag" style="color: #1b60e4;"></i>`);
+					$(currentFlag).find("i").addClass("selected");
+				}
+				$("#snackbars").append(snackbar);
+				snackbar.addClass("show");
+				setTimeout(function() { 
+					snackbar.remove();
+				}, 3000);
+				
+			}).fail(function() {
+				let snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar snackbar-failure'>Update failed: couldn't reach the server...</div>`);
+				$("#snackbars").append(snackbar);
+				snackbar.addClass("show");
+				setTimeout(function() { 
+					snackbar.remove();
+				}, 3000);
+			})
+		});
+	});
+
+	// default academic points for new course is 3
+	$("#addCourseForm div[name='threeAcademicPoints']").click();
+	
+
+	/* ############################ 	Send form with ajax		############################ */
+		function handleEditFormResponse(response) {			
+			if (response['status'] == 'error') {
+				$("#btnSendingEditCourseForm").hide();
+				$("#submitEditForm").show();
+				$("div#editCourseMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+				for(let field in response['errors']) {
+					if (field == "csrf_token") {
+						$("div#editCourseMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+					}
+					else {
+						$(`#${field}`).addClass("is-invalid");
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+						for (let error of response['errors'][field]) {
+							$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+						}
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+					}
+				}
+				$("div#editCourseMessages").fadeIn();
+				$("#editCourseModal").animate({ scrollTop: 0 }, 600);
+				
+			}
+			else if (response['status'] == 'courseIdNotFound') {
+				$("#btnSendingEditCourseForm").hide();
+				$("#submitEditForm").show();
+				$("div#editCourseMessages").append(`<div class="alert alert-danger m-0">Error: couldn't find course with id '${response['id']}' in the db.</div>`);
+				$("div#editCourseMessages").fadeIn();
+				$("#editCourseModal").animate({ scrollTop: 0 }, 600);
+			}
+			else if (response['status'] == 'success') {
+				let redirectURL = window.location.pathname;
+				window.location.replace(redirectURL);
+			}
+		}
+
+		function handleAddFormResponse(response) {			
+			if (response['status'] == 'error') {
+				$("#btnSendingAddCourseForm").hide();
+				$("#submitAddForm").show();
+				$("div#addCourseMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+				for(let field in response['errors']) {
+					if (field == "csrf_token") {
+						$("div#addCourseMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+					}
+					else {
+						$(`#${field}`).addClass("is-invalid");
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+						for (let error of response['errors'][field]) {
+							$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+						}
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+					}
+				}
+				$("div#addCourseMessages").fadeIn();
+				$("#addCourseModal").animate({ scrollTop: 0 }, 600);
+				
+			}
+
+			else if (response['status'] == 'success') {
+				let redirectURL = window.location.pathname;
+				window.location.replace(redirectURL);
+			}
+		}
+
+		function sendEditFormAjax(formData) {
+			fetch(window.location.href, {
+				method: "post",
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((response) => handleEditFormResponse(response))
+			.catch(function (error) {
+				console.log(error);
+			})
+		}
+
+		function sendAddFormAjax(formData) {
+			fetch(window.location.href, {
+				method: "post",
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((response) => handleAddFormResponse(response))
+			.catch(function (error) {
+				console.log(error);
+			})
+		}
+
+		
+		$("#editCourseForm").submit(function( event ) {
+			event.preventDefault();
+			$("#editCourseForm .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+			$("div#editCourseMessages").empty();
+			$("div#editCourseMessages").hide();
+			$("#submitEditForm").hide();
+			$("#btnSendingEditCourseForm").show();
+			let formData = new FormData(document.getElementById("editCourseForm"));
+			sendEditFormAjax(formData);
+		});
+
+
+		$("#addCourseForm").submit(function( event ) {
+			event.preventDefault();
+			$("#addCourseForm .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+			$("div#addCourseMessages").empty();
+			$("div#addCourseMessages").hide();
+			$("#submitAddForm").hide();
+			$("#btnSendingAddCourseForm").show();
+			let formData = new FormData(document.getElementById("addCourseForm"));
+			sendAddFormAjax(formData);
+		});
+
+	/* ######################## 	END OF Send form with ajax		#########################*/
+
+
+	$('#editCourseModal').on('hide.bs.modal', function() {
+		$("#editCourseModal div[name='errorMessage']").hide();
+		$("#editCourseModal .is-invalid").each(function() {
+			$(this).removeClass("is-invalid");
+		})
+	});
+
+</script>
+
+{% endblock scripts %}

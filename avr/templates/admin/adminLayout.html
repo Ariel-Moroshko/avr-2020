@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block navbar %}
+    <a class="navbar-brand px-4" href="{{ url_for('home') }}">AVR Lab Managment</a>        
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+    aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto" id="mainNavbar">
+            <li class="nav-item dropdown my-auto">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">Admin</a>
+                <div class="dropdown-menu " aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('labOverview') }}">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('manageProjects') }}">Projects</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('manageProposedProjects') }}">Proposed Projects</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('manageStudents') }}">Students</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('manageSupervisors') }}">Supervisors</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('manageCourses') }}">Courses</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0" style="position: absolute; right: 0;">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('index') }}">Homepage</a>
+            </li>
+        </ul>
+    </div>
+{% endblock navbar %}
+
+{% block navScript %} 
+<script>
+    // underline current page in navbar
+    $(function(){
+        $('.navbar-nav a.nav-link').each(function(){
+            if ($(this).prop('href') == window.location.href) {
+                $(this).addClass('active'); 
+            }
+        });
+    });
+</script>
+{% endblock navScript %}

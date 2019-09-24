@@ -1,0 +1,82 @@
+{% extends "publicPageLayout.html" %}
+{% block styles %}
+<style>
+	.card {
+	/* 	box-shadow: 0 .25rem .25rem rgba(0,0,0,.075)!important; */
+		margin-top: 2rem;	
+	}
+
+	.card-footer {
+		background-color: rgb(234, 241, 255);
+		color: #0a2b75;
+		border-top: transparent;		
+	}
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="pageTitle">
+	<h1>Proposed Projects</h1>
+</div>
+<div class="container">
+	{% if proposedProjects %}
+		<div class="mt-5 pt-4" style="font-size: 1.2rem;"><b>Note:</b> the number of academic points may vary depending on the difficulty \ complexity of the project</div>
+			<div class="row justify-content-center">
+				{% for proposedProject in proposedProjects %}
+					<div class="col-12 col-md-4 my-4">
+						<div class="card text-left shadow" style="overflow: hidden;opacity: 0;display:none;">
+							{% if proposedProject.image %}
+							<img class="card-img-top" src="../static/images/proposed_projects/{{ proposedProject.image }}" alt="{{ proposedProject.image }}">
+							{% endif %}
+							<div class="card-body d-flex flex-column" style="color: #000">
+								<h5 class="card-title mb-3 font-weight-bold" style="color: #4c3f3f">{{ proposedProject.title }}</h5>
+								<p class="card-text" style="color: rgb(41, 41, 41)">{{ proposedProject.description }}</p>
+							</div>
+							<div class="card-footer">
+								{% set academicPoints = [] %}
+								
+								{% if proposedProject.oneAcademicPoint %}
+									{{ academicPoints.append("1") or '' }}
+								{% endif %}
+								{% if proposedProject.twoAcademicPoints %}
+									{{ academicPoints.append("2") or ''  }}
+								{% endif %}
+								{% if proposedProject.threeAcademicPoints %}
+									{{ academicPoints.append("3") or ''  }}
+								{% endif %}
+								{% if proposedProject.fourAcademicPoints %}
+									{{ academicPoints.append("4") or ''  }}
+								{% endif %}
+								{% if proposedProject.fiveAcademicPoints %}
+									{{ academicPoints.append("5") or ''  }}
+								{% endif %}
+
+								<span class="font-weight-bold mr-2">{{ academicPoints|join(' / ')|default("", True) }}</span> 
+								{% if academicPoints[0] is defined %}
+									Academic points
+								{% endif %}
+								
+							</div>
+						</div>   
+					</div>
+				{% endfor %} 
+		</div>
+	{% else %}
+		<div class="mx-auto mt-5" style="padding: 3rem;">
+			<h4>Nothing to show here &#128528;</h4> 
+		</div>
+	{% endif %}
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive mx-auto">  
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+	let fadeDelay = 0;	
+	$(".card").each(function() {	
+		fadeDelay += 80;
+		$(this).fadeIn(fadeDelay).animate({'opacity':'1', 'bottom': '2rem'}, 350);
+	})
+</script>
+{% endblock scripts %}

@@ -1,0 +1,298 @@
+{% extends "publicPageLayout.html" %}
+
+{% block styles %}
+
+<style>
+	#submitForm, #btnSendingForm {
+        width: 15rem;
+		height: 3rem;
+	}
+
+    label {
+        margin-bottom: 0;
+    }
+
+    .form-section-name {
+        font-size: 1.5rem;
+        color: #001a4c;
+        border-bottom: 2px solid rgb(223, 223, 223);
+        padding-bottom: 0.5rem;
+    }
+
+    @keyframes fadeIn {
+		from {opacity: 0}
+		to {opacity: 1}
+	}
+
+	.fadeInAnimated {
+		opacity: 0;
+		animation: fadeIn 0.4s forwards;
+	}
+
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="pageTitle">
+	<h1>Registration</h1>
+</div>
+<div class="container mt-5 fadeInAnimated">
+    <div id="messages" class="col-sm-7 mx-auto my-4">
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+            {% if messages %} 
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %} 
+            {% endif %} 
+        {% endwith %}
+    </div>
+
+
+    <form id="registerForm" method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mx-auto form-section col-11 col-md-9" style="margin-top: 3.5rem">
+            <div class="row form-section-name">
+                Account
+            </div>
+            <div class="row mt-5">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.studentId.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.studentId(class="form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.password.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.password(class="form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.email.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.email(class="form-control") }}
+                    <div name="invalidFeedback" class="invalid-feedback"></div> 
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-auto form-section col-11 col-md-9 mt-5 mt-md-4">
+            <div class="row form-section-name">
+                Personal
+            </div>
+            <div class="row mt-5">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.firstNameHeb.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.firstNameHeb(class="form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.lastNameHeb.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.lastNameHeb(class="form-control") }}
+                    <div name="invalidFeedback" class="invalid-feedback"></div> 
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.firstNameEng.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.firstNameEng(class="form-control") }}
+                    <div name="invalidFeedback" class="invalid-feedback"></div> 
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.lastNameEng.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.lastNameEng(class="form-control") }}
+                    <div name="invalidFeedback" class="invalid-feedback"></div> 
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right">
+                    {{ form.profilePic.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.profilePic(class="custom-file-input") }} 
+                    <label class="custom-file-label text-left mx-3" for="profilePic">Choose file</label>	
+                    <div name="invalidFeedback" class="invalid-feedback"></div> 
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right">
+                    {{ form.cellPhone.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.cellPhone(class="form-control") }}
+                    <div name="invalidFeedback" class="invalid-feedback"></div> 
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-auto form-section col-11 col-md-9 mt-5">
+            <div class="row form-section-name">
+                Academic
+            </div>
+            <div class="row mt-5">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.academicStatus.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.academicStatus(class="custom-select form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.faculty.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.faculty(class="custom-select form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.semester.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.semester(class="custom-select form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.year.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.year(class="custom-select form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-5 my-auto text-md-right required">
+                    {{ form.projectTitle.label(class="font-weight-bold") }} 
+                </div>
+                <div class="col-12 col-md-5">
+                    {{ form.projectTitle(class="custom-select form-control") }} 
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-auto form-section col-11 col-md-9 mt-5">
+            <div class="row form-section-name">
+            </div>
+            <div class="row mt-5 justify-content-center">
+                <div id="recaptcha">
+                    {{ form.recaptcha }}
+                    <div name="invalidFeedback" class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center mt-5">
+            {{ form.submitForm(class="btn btn-lg btn-primary") }}
+            <button id="btnSendingForm" class="btn btn-lg btn-primary" type="button" style="display: none;" disabled>
+                <span class="spinner-border spinner-border-sm" style="vertical-align: middle;" role="status" aria-hidden="true"></span>
+                <span class="ml-1">In process...</span>
+            </button>
+        </div>
+
+    </form>
+
+    <img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+{% endblock content %}
+
+{% block scripts %}
+	<script>
+		$('.custom-file-input').on('change', function() { 
+			let fileName = $(this).val().split('\\').pop(); 
+			$(this).next('.custom-file-label').addClass("selected").html(fileName); 
+        });
+        
+        function handleFormResponse(response) {			
+			if (response['status'] == 'error') {
+                grecaptcha.reset();
+				$("#btnSendingForm").hide();
+				$("#submitForm").show();
+				$("div#messages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`);
+				for(let field in response['errors']) {
+					if (field == "csrf_token") {
+						$("div#messages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`);
+					}
+					else {
+						$(`#${field}`).addClass("is-invalid");
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+						for (let error of response['errors'][field]) {
+							$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+						}
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+					}
+				}
+				$("div#messages").fadeIn();
+				$("html").animate({ scrollTop: 0 }, 600);
+				
+			}
+			else if (response['status'] == 'fileTooLarge') {
+                grecaptcha.reset();
+				$("#btnSendingForm").hide();
+				$("#submitForm").show();
+				$("div#messages").append(`<div class="alert alert-danger">Error: the file you are trying to send is too large.</div>`);
+				$("div#messages").fadeIn();
+				$("html").animate({ scrollTop: 0 }, 600);
+			}
+			else if (response['status'] == 'success') {
+				let redirectURL = "/login";
+				window.location.replace(redirectURL);
+			}
+		}
+
+
+		function sendFormAjax(formData) {
+			fetch(window.location.href, {
+				method: "post",
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((response) => handleFormResponse(response))
+			.catch(function (error) {
+				console.log(error);
+			})
+		}
+
+		
+		$("#registerForm").submit(function( event ) {
+			event.preventDefault();
+			$("#registerForm .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+			$("div#messages").empty();
+			$("div#messages").hide();
+			$("#submitForm").hide();
+			$("#btnSendingForm").show();
+			let formData = new FormData(document.getElementById("registerForm"));
+			sendFormAjax(formData);
+		});
+
+
+	</script>
+{% endblock scripts %}

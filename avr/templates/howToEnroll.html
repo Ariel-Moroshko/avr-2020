@@ -1,0 +1,750 @@
+{% extends "publicPageLayout.html" %}
+
+{% block styles %}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>    
+    @keyframes fadeIn {
+		from {opacity: 0}
+		to {opacity: 1}
+	}
+
+	.pageTitle h1 {
+		font-size: 2.4rem;
+		font-weight: 400;
+		letter-spacing: -0.1rem;
+	}
+
+	.fadeInAnimated {
+		opacity: 0;
+		animation: fadeIn 0.4s forwards;
+    }
+
+	.step {
+		position: relative;
+	}
+
+	.illustration {
+		position: absolute; 
+	}
+
+	.box {
+		padding: 2rem 1.5rem 1rem 2rem;
+		direction: rtl;
+		text-align: right;
+		border-radius: 1rem; 
+        position: absolute;
+	}
+
+	.right-box::before {
+		position: absolute;
+		font-size: 6rem;
+		color: rgb(154, 174, 212);
+		top: -5rem;
+		right: -0.2rem;
+		font-weight: bold;
+	}
+
+	.right-box::after {
+        content: "";
+        width: 11rem;
+        height: 11rem;
+        position: absolute;
+		background: linear-gradient(90deg, rgb(242, 244, 246) 20px, transparent 1%) center, linear-gradient(rgb(242, 244, 246) 20px, transparent 1%) center, #9aaed4;
+  		background-size: 24px 24px;
+		z-index: -1;
+		right: -1.2rem;
+    	bottom: -2.5rem;
+    }
+
+	
+	.left-box::before {
+		position: absolute;
+		font-size: 7rem;
+		color: rgb(154, 174, 212);
+		top: -5rem;
+    	left: -1rem;
+		font-weight: bold;
+	}
+
+	.left-box::after {
+        content: "";
+        width: 15rem;
+        height: 15rem;
+        position: absolute;
+		background: linear-gradient(90deg, rgb(242, 244, 246) 20px, transparent 1%) center, linear-gradient(rgb(242, 244, 246) 20px, transparent 1%) center, #9aaed4;
+  		background-size: 24px 24px;
+		z-index: -1;
+		left: -3.5rem;
+    	top: -2.5rem;
+    }
+
+
+	.step-1 .box, .step-3 .box, .step-5 .box, .step-7 .box, .step-9 .box{
+		background-color: rgb(67, 133, 244);
+		color: rgb(248, 248, 248);
+	}
+
+	.step-2 .box, .step-4 .box, .step-6 .box, .step-8 .box {
+		background-color: rgb(18, 17, 35);
+		color: rgb(248, 248, 248);
+	}
+
+	h3 {
+		font-size: 1.2rem;
+		font-weight: bold;
+	}
+
+	/* ########################################		STEP 1		########################################*/
+	.step-1 {
+		height: 27rem;
+	}
+
+	.step-1 .illustration {
+		left: 15%;
+	}
+
+	.step-1 .illustration img {
+		width: 12rem; 
+	}
+	
+	.step-1 .box {
+		width: 95%; 
+		top: 6rem;
+		left: 0;
+	}
+	.step-1 .box::before {
+		content: "1";
+	}
+
+	
+	/* ########################################		STEP 2		########################################*/
+	.step-2 {
+		height: 32rem;
+	}
+
+	.step-2 .illustration {
+		right: 5%;
+	}
+
+	.step-2 .illustration img {
+		width: 12rem; 
+	}
+
+	.step-2 .box {
+		width: 95%; 
+		top: 7rem;
+		right: 0;
+	}
+
+	.step-2 .box::before {
+		content: "2";
+	}
+
+
+	/* ########################################		STEP 3		########################################*/
+	.step-3 {
+		height: 27rem;
+	}
+
+	.step-3 .illustration {
+		left: 15%;
+	}
+
+	.step-3 .illustration img {
+		width: 12rem; 
+	}
+
+	.step-3 .box {
+		width: 95%; 
+		top: 6rem;
+		left: 0;
+	}
+	
+	.step-3 .box::before {
+		content: "3";
+	}
+
+
+	/* ########################################		STEP 4		########################################*/
+	.step-4 {
+		height: 41rem;
+	}
+
+	.step-4 .illustration {
+		right: 9%;
+	}
+
+	.step-4 .illustration img {
+		width: 13rem; 
+	}
+
+	.step-4 .box {
+		width: 95%; 
+		top: 7rem;
+		right: 0;
+	}
+	
+	.step-4 .box::before {
+		content: "4";
+	}
+
+	
+	/* ########################################		STEP 5		########################################*/
+	.step-5 {
+		height: 24rem;
+	}
+
+	.step-5 .illustration {
+		left: 15%;
+	}
+
+	.step-5 .illustration img {
+		width: 12rem; 
+	}
+	
+	.step-5 .box {
+		width: 95%; 
+		top: 8rem;
+		left: 0;
+	}
+
+	.step-5 .box::before {
+		content: "5";
+	}
+
+	/* ########################################		STEP 6		########################################*/
+	.step-6 {
+		height: 35rem;
+	}
+
+	.step-6 .illustration {
+		right: 5%;
+	}
+	
+	.step-6 .illustration img {
+		width: 12rem; 
+	}
+
+	.step-6 .box {
+		width: 95%; 
+		top: 8rem;
+		right: 0;
+	}
+	
+	.step-6 .box::before {
+		content: "6";
+	}
+
+	
+	/* ########################################		STEP 7		########################################*/
+	.step-7 {
+		height: 26rem;
+	}
+
+	.step-7 .illustration {
+		left: 15%;
+	}
+
+	.step-7 .illustration img {
+		width: 12rem; 
+	}
+	
+	.step-7 .box {
+		width: 95%; 
+		top: 8rem;
+		left: 0;
+	}
+
+
+	.step-7 .box::before {
+		content: "7";
+	}
+
+	/* ########################################		STEP 8		########################################*/
+	.step-8 {
+		height: 33rem;
+	}
+
+	.step-8 .illustration {
+		right: 5%;
+	}
+
+	.step-8 .illustration img {
+		width: 12rem; 
+	}
+
+	.step-8 .box {
+		width: 95%; 
+		top: 9rem;
+		right: 0;
+	}
+	
+	.step-8 .box::before {
+		content: "8";
+	}
+
+	/* ########################################		STEP 9		########################################*/
+	.step-9 {
+		height: 30rem;
+	}
+
+	.step-9 .illustration {
+		left: 15%;
+	}
+
+	.step-9 .illustration img {
+		width: 12rem; 
+	}
+	
+	.step-9 .box {
+		width: 95%; 
+		top: 8rem;
+		left: 0;
+	}
+
+	.step-9 .box::before {
+		content: "9";
+	}
+
+	/* ################################################################################################# */
+
+
+	.step li {
+		line-height: 2.3rem;
+		font-size: 1rem;
+		text-indent: -1.7rem;
+	}
+
+	.step ul {
+		list-style-type: none;
+		padding-right: 2rem;
+	}
+	.step ul li:before {    
+		content: "\f058";
+		font-family: FontAwesome;
+		color: rgb(29, 255, 215);
+		font-size: 1.2rem;
+		margin-left: 0.7rem;
+		vertical-align: middle;
+	}
+
+	.step .right-box ul li:before {    
+		color: rgb(176, 255, 241);
+	}
+
+	@media(min-width:1024px) {
+		.pageTitle h1 {
+			font-size: 2.6rem;
+		}
+
+		h3 {
+			font-size: 1.75rem;
+			font-weight: 500;
+		}
+
+		.step li {
+			font-size: 1.1rem;
+		}
+
+		.box {
+			padding: 2rem 2.5rem 1rem 2rem;
+		}
+
+		.left-box::before {
+			font-size: 7rem;
+			top: -9rem;
+			left: -2.5rem;
+		}
+
+		.left-box::after {
+			width: 15rem;
+			height: 15rem;
+			left: -5rem;
+			top: -2.5rem;
+		}
+
+
+		.right-box::before {
+			font-size: 7rem;
+			top: -6rem;
+			right: -4.7rem;
+		}
+
+		.right-box::after {
+			width: 15rem;
+			height: 15rem;
+			right: -5rem;
+			bottom: -3rem;
+		}
+
+		/* ########################################		STEP 1		########################################*/
+		.step-1 {
+			height: 35rem;
+		}
+
+		.step-1 .illustration {
+			left: 15%;
+		}
+
+		.step-1 .illustration img {
+			width: 30rem; 
+		}
+		
+		.step-1 .box {
+			width: 27rem; 
+			top: 11rem;
+			left: 27rem;
+		}
+
+		/* ########################################		STEP 2		########################################*/
+		.step-2 {
+			height: 31rem;
+		}
+
+		.step-2 .illustration {
+			right: 8%;
+		}
+
+		.step-2 .illustration img {
+			width: 28rem; 
+		}
+
+		.step-2 .box {
+			width: 29rem; 
+			top: 5rem;
+			right: 33rem;
+		}
+
+		/* ########################################		STEP 3		########################################*/
+		.step-3 {
+			height: 38rem;
+		}
+
+		.step-3 .illustration {
+			left: 15%;
+		}
+
+		.step-3 .illustration img {
+			width: 25rem; 
+		}
+
+		.step-3 .box {
+			width: 27rem; 
+			top: 8rem;
+			left: 30rem;
+		}
+
+
+		/* ########################################		STEP 4		########################################*/
+		.step-4 {
+			height: 35rem;
+		}
+
+		.step-4 .illustration {
+			right: 2%;
+		}
+
+		.step-4 .illustration img {
+			width: 30rem; 
+		}
+
+		.step-4 .box {
+			width: 35rem; 
+			top: -1rem;
+			right: 30rem;
+		}
+
+		/* ########################################		STEP 5		########################################*/
+		.step-5 {
+			height: 27rem;
+		}
+
+		.step-5 .illustration {
+			left: 8%;
+		}
+
+		.step-5 .illustration img {
+			width: 30rem; 
+		}
+		
+		.step-5 .box {
+			width: 27rem; 
+			top: 0rem;
+			left: 33rem;
+		}
+
+		.step-5 .right-box::after {
+			height: 13rem;
+			bottom: -4rem;
+		}
+
+		/* ########################################		STEP 6		########################################*/
+		.step-6 {
+			height: 45rem;
+		}
+
+		.step-6 .illustration {
+			right: 5%;
+		}
+		
+		.step-6 .illustration img {
+			width: 27rem; 
+		}
+
+		.step-6 .box {
+			width: 38rem; 
+			top: 16rem;
+			right: 23rem;
+		}
+
+		/* ########################################		STEP 7		########################################*/
+		.step-7 {
+			height: 29rem;
+		}
+
+		.step-7 .illustration {
+			left: 8%;
+		}
+
+		.step-7 .illustration img {
+			width: 30rem; 
+		}
+		
+		.step-7 .box {
+			width: 27rem; 
+			top: 0rem;
+			left: 33rem;
+		}
+
+		/* ########################################		STEP 8		########################################*/
+		.step-8 {
+			height: 39rem;
+		}
+
+		.step-8 .illustration {
+			right: 5%;
+		}
+
+		.step-8 .illustration img {
+			width: 25rem; 
+		}
+
+		.step-8 .box {
+			width: 31rem; 
+			top: 12rem;
+			right: 23rem;
+		}
+
+		/* ########################################		STEP 9		########################################*/
+		.step-9 {
+			height: 38rem;
+		}
+
+		.step-9 .illustration {
+			left: 15%;
+		}
+
+		.step-9 .illustration img {
+			width: 29rem; 
+		}
+		
+		.step-9 .box {
+			width: 27rem; 
+			top: 13rem;
+			left: 29rem;
+		}
+
+	}
+
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="pageTitle">
+	<h1>תהליך ביצוע פרויקט</h1>
+</div>
+
+<div class="container fadeInAnimated" style="margin-top: 6rem; overflow-x: hidden;">
+
+    <div class="step step-1" data-aos="fade-up">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/1.svg">
+        </div>
+        <div class="box right-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">התעניינות בפרויקט</h3>
+				<div>
+					<ul>
+						<li>עיון באתרי המעבדות</li>
+						<li>בחירת פרויקט \ מספר פרויקטים</li>
+						<li>קביעת פגישת בחירת פרוייקט</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+ 
+	<div class="step step-2" data-aos="fade-right">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/2.svg">
+        </div>
+        <div class="box left-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">פגישת בחירת פרויקט</h3>
+				<div>
+					<ul>
+						<li>דיון בעניין הצעות פרויקטים מהאתר</li>
+						<li>אפשרות הגדרת פרוייקט חדש בעזרת המנחים</li>
+						<li>הסבר על תהליך הפרויקט</li>
+						<li>החלטה על פרויקט</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-3" data-aos="fade-left">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/3.svg">
+        </div>
+        <div class="box right-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">לפני פגישת התנעה</h3>
+				<div>
+					<ul>
+						<li>הרשמה למעבדה</li>
+						<li>מילוי דף התנעה באתר</li>
+						<li>קביעת פגישת התנעה</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-4" data-aos="zoom-in-right" data-aos-anchor-placement="top-bottom">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/4.svg">
+        </div>
+        <div class="box left-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">פגישת התנעה</h3>
+				<div>
+					<ul>
+						<li>הצגת מטרות הפרוייקט ולוחות זמנים באמצעות דף התנעה</li>
+						<li>דיון בנושא הפרויקט - שאלות ובעיות</li>
+						<li>שיוך הפרויקט לצוות השותפים</li>
+						<li>פתרון בעיות רישום</li>
+						<li>עדכון כרטיסי כניסה למעבדה ופתיחת משתמש</li>
+						<li>קביעת תכולה לפגישת אמצע</li>
+						<li>השאלת ציוד</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-5" data-aos="fade-left">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/5.svg">
+        </div>
+        <div class="box right-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">לפני פגישת אמצע</h3>
+				<div>
+					<ul>
+						<li>מילוי דף סטטוס</li>
+						<li>קביעת פגישת אמצע</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-6" data-aos="zoom-in-right">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/6.svg">
+        </div>
+        <div class="box left-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">פגישת אמצע</h3>
+				<div>
+					<ul>
+						<li>הצגת הפרויקט ע"פ התכולה שנקבעה בעזרת הדגמה מקצה לקצה</li>
+						<li>בחינת הפרויקט ובדיקת המשימות לקראת סיום</li>
+						<li>דיון לגבי תכולת סיום הפרויקט</li>
+						<li>קביעת הפגישה בעזרת דודל</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-7" data-aos="fade-left">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/5.svg">
+        </div>
+        <div class="box right-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">לפני פגישת סיום</h3>
+				<div>
+					<ul>
+						<li>מילוי דף סטטוס</li>
+						<li>קביעת פגישת סיום</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-8" data-aos="zoom-in">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/8.svg">
+        </div>
+        <div class="box left-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">פגישת סיום</h3>
+				<div>
+					<ul>
+						<li>הצגת סופית של הפרויקט כולל הדגמה</li>
+						<li>הגשת סרטון</li>
+						<li>הגשת דוח פרויקט</li>
+						<li>העלאת הקוד ל GITLAB</li>
+						<li>רשימת השלמות</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+	<div class="step step-9" data-aos="fade-left">
+        <div class="illustration">
+            <img src="/static/images/howToEnroll/9.svg">
+        </div>
+        <div class="box right-box shadow">
+			<div style="position: relative">
+				<h3 class="mb-2 mb-md-3">אחרי פגישת סיום</h3>
+				<div>
+					<ul>
+						<li>השלמות ע"פ פגישת סיום</li>
+						<li>העלאת דף פרויקט באתר המעבדה</li>
+						<li>החזרת ציוד</li>
+						<li>הזנת ציון</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+	</div>
+
+    <img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+	AOS.init({
+		once: true,
+		duration: 1000,
+	});
+</script>
+{% endblock scripts %}

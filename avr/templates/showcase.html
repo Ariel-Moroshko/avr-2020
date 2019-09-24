@@ -1,0 +1,438 @@
+{% extends "publicPageLayout.html" %}
+{% block styles %}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+	.modal-content {
+    	border: 0;
+	}
+
+	#selectYearDropdown a:focus {
+		background-color: #e9f1ff;
+		color: rgb(36, 88, 202);
+	}
+
+	div[name="project"] {
+		margin-top: 2rem;
+	}
+
+	#projectDetailsModal .modal-content {
+		background-color: #232323;
+		color: #e8e8e8;
+	}
+
+	#projectDetailsModal a{
+		color: #acd4ff;
+	}
+
+	#projectDetailsModal a:hover{
+		color: #acd4ff;
+		font-weight: bold;
+		text-decoration: none;
+	}
+	
+	#projectDetailsModal  .modal-footer{
+		background-color: #232323;
+		border: 0;
+	}
+
+	.btn-close-modal {
+		color: rgb(228, 228, 228);
+		border-color: #eaeaea;
+		border-radius: 1.1rem;
+	}
+
+	.btn-close-modal:hover {
+		color: rgb(228, 228, 228);
+		background-color: #2d2d2d;
+	}
+	
+
+	#projectDetailsModal [name="students"] {
+    background-color: #333333;
+	}
+
+	.card-back-image{
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+		z-index: -1;
+		transition: all 1.5s ease;
+	}
+
+	.card {
+		background-color: rgba(0, 0, 0, 0.75);
+	}
+
+	.card:hover .card-back-image {
+		transform: scale(1.3);
+	}
+	
+	.card-info {
+		color: #fff;
+		margin: 2rem 3rem;
+		text-align: left;
+	}
+
+  .card-title {
+		color: rgb(217, 237, 255);
+		font-weight: bold;
+		padding-bottom: 1rem;
+	}
+
+	.card-text {
+		color: rgb(223, 223, 223);
+		line-height: 1.6rem;
+		font-size: 1.1rem;
+	}
+	
+	.btn-seeMore {
+		background-color: rgb(14, 12, 12);
+		color: #e6e6e6;
+		border-radius: 1.1rem;
+		border-color: white;
+		width: 8.2rem;
+		height: 2.6rem;
+	}
+
+	.btn-seeMore:hover, .btn-seeMore:active, .btn-seeMore:focus {
+		color: #e6e6e6;
+		transition: all .15s;	
+		outline: none;
+		box-shadow: none;
+		transform: translateY(-2px);
+	}
+
+  .studentPic {
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    border-radius: 50%;
+	}
+	
+	.invisible {
+		display: none;
+	}
+
+	#videoLoading {
+		position: absolute; 
+		margin-top:30%; 
+		left:35%;
+	}
+
+	.btn-dark {
+		padding: 0.5rem 1.3rem;
+		background-color: rgb(35, 38, 41);
+		border-color: rgb(35, 38, 41);
+	}
+
+	@media only screen and (min-width: 1200px) {
+		.invisible {
+			display: block;
+		}
+
+		#videoLoading {
+			position: absolute; 
+			margin-top:20%; 
+			left:45%;
+		}
+	}
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="pageTitle">
+	<h1 >Projects Showcase</h1>
+</div>
+<div class="container pt-3">
+		{% if projectsYears %}
+    <div class="row justify-content-center mt-5">
+      <div class="col-12 text-center text-md-left mb-3" style="font-size: 1.2rem">
+          <span class="my-auto px-2">Showing projects completed in:</span>
+        <div class="btn-group">
+            <button id="btnSelectYear" data-year="{{projectsYears[0]}}" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-radius: 0.50rem">
+              {{projectsYears[0]}}
+            </button>
+            <div id="selectYearDropdown" class="dropdown-menu">
+              {% for year in projectsYears %}
+                <a class="dropdown-item" data-year="{{year}}" href="">{{year}}</a>
+              {% endfor %}
+            </div>
+        </div>
+      </div>
+		</div>
+		{% else %}
+		<div class="mx-auto" style="padding: 4rem;">
+			<h4>Nothing to show here &#128528;</h4> 
+		</div>
+		{% endif %}
+	  <div id="projects" class="row justify-content-between mt-4"> 
+		</div>
+		<div id="loadingProjects" class="mx-auto" style="padding: 7rem; display: none;">
+			<div>Loading projects...</div>
+			<div class="spinner-border mt-4"></div>
+		</div>
+		<div id="loadingProjectsError" class="mx-auto" style="padding: 4rem; display: none;">
+			<img src="/static/images/no_project_doc.svg" style="max-width:12rem">
+			<h4 class="mt-3 pb-4">Oops! Couldn't load projects...</h4> 
+			<button id="btnTryAgainLoadProjects" type="button" class="btn btn-primary">TRY AGAIN</button>
+		</div>
+  
+    <div class="modal fade" id="projectDetailsModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+				<div class="modal-content" id="loadingProjectDetailsError" style="display: none;">
+					<div class="modal-body py-5">
+						<img src="/static/images/no_project_doc.svg" style="max-width:12rem">
+						<h4 class="mt-3 pb-2" style="color:rgb(213, 213, 213)">Oops! Seems like your network is down...</h4> 
+					</div>
+				</div>
+				<div class="modal-content" id="loadingProjectDetailsContent">
+					<div class="modal-body p-0">
+						<div class="alert shadow text-center mb-0">
+							Loading project details...<br>
+							<div class="spinner-border mt-3"></div>
+						</div>
+					</div>
+				</div>
+        <div class="modal-content" id="projectDetailsContent" style="display: none;">
+					<div style="width: 100%; height: 360px; background-color: black;">
+						<div id="videoLoading">
+							<div class="mb-2">Loading video</div>
+							<div class="spinner-grow">
+								<div class="sr-only">Loading video...</div>
+							</div>
+						</div>
+						<iframe name="video" width="100%" height="360" src="" frameborder="0" style="display: none;" allowfullscreen></iframe>
+					</div>
+          <div class="modal-body px-0">
+            <h2 name="title" class="mb-1 mt-4 mx-auto px-3" style="color: rgb(217, 237, 255); font-weight: bold; max-width: 40rem;"></h2>
+            
+            <div style="max-width: 40rem;" class="h6 mb-4 mx-auto px-3">Supervised by: <div name="supervisors" class="d-inline"></div></div>
+            <div name="students" class="row mx-auto my-4 py-4 justify-content-center">
+            </div>
+
+            <h5 class="mt-5" style="font-weight: bold;">Abstract</h5>
+            <p class="text-left px-4 px-md-5 mt-3 mb-5" style="line-height: 1.8rem; font-size: 1.1rem;" name="abstract"></p>
+
+            <div class="row mx-auto mt-3 my-md-4 justify-content-center">
+              <div class="col-2 col-md-1 my-2 my-md-auto text-right px-2">
+                <i class="far fa-file-alt" style="font-size:2rem;"></i>
+              </div>
+              <div class="col-4 col-md-2 text-left px-0 my-auto">
+                <a href="" target="_blank" class="ml-1" name="report">Project Report</a>
+              </div>
+    
+              <div class="col-2 col-md-1 my-2 my-md-auto text-right px-2">
+                <i class="far fa-file-powerpoint" style="font-size:2rem;"></i>
+              </div>
+              <div class="col-4 col-md-2 text-left px-0 my-auto">
+                <a href="" target="_blank" class="ml-1" name="presentation">Presentation</a>
+              </div>
+            </div>
+            <div class="row mx-auto my-md-4 justify-content-center">
+              <div name="codeIcon" class="col-2 col-md-1 my-2 my-md-auto text-right px-2">
+                <i class="far fa-file-code" style="font-size:2rem;"></i>
+              </div>
+              <div name="code" class="col-4 col-md-2 text-left px-0 my-auto">
+                <a href="" target="_blank" class="ml-1">Code</a>
+              </div>
+    
+              <div name="githubLinkIcon" class="col-2 col-md-1 my-2 my-md-auto text-right px-2">
+                <i class="fab fa-github" style="font-size:2rem;"></i>
+              </div>
+              <div name="githubLink" class="col-4 col-md-2 text-left px-0 my-auto">
+                <a href="" target="_blank" class="ml-1">Github</a>
+							</div>
+            </div>                    
+            <div class="my-5">
+              <img class="" name="image" style="max-height: 25rem;object-fit: contain;width:100%" src="">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-close-modal mx-auto px-4 mb-3" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+		</div>
+
+	  <img src="/static/images/powered_by.png" class="mt-5 img-responsive mx-auto">  
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+	AOS.init({
+		once: true,
+		duration: 800,
+	});
+
+  //stop youtube video on modal close
+  $('.modal').on('hidden.bs.modal', function () {
+			let iframVideo = $('.modal').find('iframe');
+			$("#projectDetailsModal [name='video']").attr("src", "");
+			$("#videoLoading").show();
+			$("#projectDetailsModal [name='codeIcon']").removeClass("invisible");
+			$("#projectDetailsModal [name='code']").removeClass("invisible");
+	});
+
+
+	{%  if projectsYears %}
+
+  let getProjectsRequest = $.post( `${window.location.href}/{{projectsYears[0]}}`, function(data) {
+      displayProjects(data);
+  })
+  .fail(function(e) {
+			$("#loadingProjects").hide();
+			$("#loadingProjectsError").fadeIn();
+	});
+	
+	{% endif %}
+
+  	function displayProjects(projects) {
+		let projcetsHTML = ``;
+		for(project of projects) {
+			let projectHTML = `
+			<div name="project" class="col-12 col-md-6" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
+							<div class="card text-center shadow" style="overflow: hidden;">
+								<div class="card-back-image" style="background-image: url(${project.image});"></div>
+				<div class="card-info">
+					<h4 class="card-title">${project.title}</h4>
+									<p class="card-text text-left pb-1">${project.abstract}<br>
+									</p>
+									<button type="button" name="seeMore" class="btn btn-seeMore mb-2 mt-3 shadow" data-project-id="${project.id}">
+										<span style="vertical-align: middle;">See More</span>
+										<i class="fas fa-chevron-circle-right ml-1" style="vertical-align: middle;"></i>
+									</button>
+								</div>
+				</div>
+			</div>
+			`;
+			projcetsHTML += projectHTML;
+		}
+		
+		$("#projects").html(projcetsHTML);
+			
+		//fadeInProjects();
+		}
+		
+		function fadeInProjects() {
+			let fadeDelay = 0;	
+			$("#projects div[name='project']").each(function() {	
+				fadeDelay += 80;
+				$(this).fadeIn(fadeDelay).animate({'opacity':'1', 'bottom': '2rem'}, 350);
+			})
+	}
+
+  function getProjectDetails(projectId) { 
+    let getProjectsRequest = $.post( `${window.location.href}/Project/${projectId}`, function(data) {
+      showProjectDetails(data);
+    })
+    .fail(function(e) {
+				$("#loadingProjectDetailsContent").hide();	
+				$("#loadingProjectDetailsError").fadeIn();
+    });
+  }
+
+  function showProjectDetails(project) {    
+		$("#projectDetailsModal [name='video']").attr("src", `https://www.youtube.com/embed/${project.youtubeVideoId}?autoplay=1&mute=1&rel=0`);
+    $("#projectDetailsModal [name='title']").text(project.title);
+    $("#projectDetailsModal [name='supervisors']").text(project.supervisors.join(", "));
+    let studentsHTML = ``;
+    for( student of project.students ) {
+      studentsHTML += `
+        <div class="col-6 col-md-2 my-3 my-md-0">
+          <img src="${student.profilePic}" class="shadow studentPic"
+            style="width:5rem;height:5rem;">
+          <div class="mt-2">${student.fullNameEng}</div>
+        </div>
+      `;
+		}
+		$("#projectDetailsModal [name='abstract']").text(project.abstract);
+    $("#projectDetailsModal [name='students']").html(studentsHTML);
+    $("#projectDetailsModal [name='report']").attr("href", project.report);
+    $("#projectDetailsModal [name='presentation']").attr("href", project.presentation);
+    
+    if (project.code) {
+			$("#projectDetailsModal [name='codeIcon']").css("visibility", "visible");
+			$("#projectDetailsModal [name='code'] a").css("visibility", "visible");			
+      $("#projectDetailsModal [name='code'] a").attr("href", project.code);
+    }
+    else {
+      $("#projectDetailsModal [name='codeIcon']").css("visibility", "hidden");
+			$("#projectDetailsModal [name='code'] a").css("visibility", "hidden");
+			$("#projectDetailsModal [name='codeIcon']").addClass("invisible");
+			$("#projectDetailsModal [name='code']").addClass("invisible");
+    }
+
+    if (project.githubLink) {
+			$("#projectDetailsModal [name='githubLinkIcon']").css("visibility", "visible");
+      $("#projectDetailsModal [name='githubLink'] a").css("visibility", "visible");
+      $("#projectDetailsModal [name='githubLink'] a").attr("href", project.githubLink);
+    }
+    else {
+      $("#projectDetailsModal [name='githubLinkIcon']").css("visibility", "hidden");
+      $("#projectDetailsModal [name='githubLink'] a").css("visibility", "hidden");
+    }
+		
+		$("#projectDetailsModal [name='image']").attr("src", project.image);
+		$("#videoLoading").show();
+		
+		$("#loadingProjectDetailsContent").hide();		
+		$("#projectDetailsContent").fadeIn();
+  }
+
+  $(document).on("click", "button[name='seeMore']", function() {
+		let projectId = $(this).data("projectId");
+		$("#projectDetailsContent").hide();
+		$("#loadingProjectDetailsContent").show();		
+		$("#loadingProjectDetailsError").hide();
+		$("#projectDetailsModal").modal("show");
+    getProjectDetails(projectId);
+	});
+	
+	$("#projectDetailsModal [name='video']").on("load", function () {
+			$("#videoLoading").hide();
+			$("#projectDetailsModal [name='video']").fadeIn(500);
+	});
+
+	$("#selectYearDropdown a").on("click", function(e) {
+		e.preventDefault();
+		let previousYear = $("#btnSelectYear").data("year");
+		let selectedYear = $(this).data("year");
+		
+		if ( previousYear == selectedYear ) {
+			return;
+		}
+
+		$("#btnSelectYear").data("year", selectedYear);
+		$("#btnSelectYear").text(selectedYear);
+		loadProjectsByYear(selectedYear);
+	});
+
+	function loadProjectsByYear(year) {
+		$("#loadingProjectsError").hide();
+		$("#projects").hide();
+		$("#loadingProjects").fadeIn();
+		let getProjectsRequest = $.post( `${window.location.href}/${year}`, function(data) {
+			$("#loadingProjects").hide();
+			$("#projects").fadeIn();
+      displayProjects(data);
+		})
+		.fail(function(e) {			
+			$("#loadingProjects").hide();
+			$("#loadingProjectsError").fadeIn();
+		});
+	}
+
+	$("#btnTryAgainLoadProjects").on("click", function() {
+		let selectedYear = $("#btnSelectYear").data("year");
+		loadProjectsByYear(selectedYear);
+	});
+
+</script>
+{% endblock scripts %}
+

@@ -1,0 +1,153 @@
+{% extends "publicPageLayout.html" %}
+
+{% block styles %}
+<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+<style>
+	h1 {
+		font-family: 'Nunito', sans-serif;
+	}
+	input[type="text"], input[type="password"]{
+		background-color: rgba(156, 204, 255, 0.06);
+		height: 2.4em;
+	}
+	.btn-primary {
+		font-weight: 600;
+		color: #daf0ff;
+	}
+
+	input[type="submit"] {
+		line-height: 2rem;
+		width: 18rem;
+		letter-spacing: 0.1rem;
+	}
+
+	#btnSendingForm {
+		line-height: 2rem;
+		width: 18rem;
+	}
+
+	a, a:hover, a:focus {
+		color: #001a4c;
+	}
+
+	@keyframes fadeIn {
+		from {opacity: 0}
+		to {opacity: 1}
+	}
+
+	.fadeInAnimated {
+		opacity: 0;
+		animation: fadeIn 0.4s forwards;
+	}
+</style>
+{% endblock styles %} 
+
+{% block content %}		
+	<div class="container mt-4 fadeInAnimated" style="padding-top: 70px;">
+		<form id="loginForm" method="POST" action="" style="background-color: white;box-shadow: 0 4px 6px 
+		hsla(0, 0%, 0%, 0.2);padding:30px; border-radius: 6px;max-width:420px;border-top: 6px solid #001a4c;border-top-left-radius:0;border-top-right-radius:0;" class="mx-auto">
+			<i class="fas fa-sign-in-alt" style="font-size:2em; border-radius: 50%;box-shadow: 0px 0px 2px #888;padding: 0.6em 0.6em;color:rgba(0, 0, 0, 0.3)"></i>
+			<h1 style="font-size:3em;margin-top:0;" class=" pb-2 mt-3 mb-2">Lab Login</h1>
+			{{ form.hidden_tag() }}	
+			{% with messages = get_flashed_messages(with_categories=true) %} 
+				{% if messages %} 
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">
+							{{ message }}
+						</div>
+					{% endfor %} 
+				{% endif %} 
+			{% endwith %}
+			<div class="form-group row justify-content-md-center mt-4">
+				<div class="">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.2rem 0 0 1.2rem;"><i class="fas fa-user pl-2"></i></div>
+						</div>
+						{% if form.id.errors %} 
+							{{ form.id(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.id.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %} 
+							{{ form.id(class="form-control form-control-lg") }} 
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center">
+				<div class="">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.2rem 0 0 1.2rem;"><i class="fas fa-lock pl-2"></i></div>
+						</div>
+						{% if form.password.errors %} 
+							{{ form.password(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.password.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %} 
+							{{ form.password(class="form-control form-control-lg") }} 
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center">
+				<div class="mx-auto mt-4">
+					{{ form.submitLoginForm(class="btn btn-primary shadow py-2") }}
+					<button id="btnSendingForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						<span class="ml-1">Loggin In...</span>
+					</button>
+				</div>
+			</div>
+			<div class="form-group row justify-content-md-center mt-5 pb-0 mb-0">
+				<div class="col">
+					<a class="" href="{{ url_for('register') }}">
+						Register
+					</a>
+				</div>
+			</div>
+			<div class="form-group row justify-content-md-center mt-2">
+					<div class="col">
+					<a class="" href="{{ url_for('resetRequest') }}">
+						Forgot your password?
+					</a>
+				</div>
+			</div>
+		</form>
+		<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+	</div>
+		
+		
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+	$( "input[name='id'], input[name='password']" ).on("focus",  function() {
+		$(this).css({"-webkit-box-shadow": "none", "outline": "-webkit-focus-ring-color auto 0px", "border-left": "1px solid #dadada", "transition-property": "none"});
+		$(this).closest(".input-group").toggleClass("inputGroupFocused");
+	});
+
+	$( "input[name='id'], input[name='password']" ).on("focusout",  function() {
+		$(this).css({"border": "1px solid #ced4da"});
+		$(this).closest(".input-group").toggleClass("inputGroupFocused");
+	});
+
+	$(function (){
+		$("input[name='id']").focus();
+	});
+
+	$("#loginForm").submit(function( event ) {
+        $("#submitLoginForm").hide();
+		$("#btnSendingForm").show();
+	});
+</script>
+{% endblock scripts %}

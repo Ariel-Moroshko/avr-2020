@@ -1,0 +1,61 @@
+{% extends "studentLayout.html" %} 
+{% block styles %}
+<style>
+	@keyframes fadeInPage {
+        from {opacity: 0}
+        to {opacity: 1}
+    }
+
+    .fadeInAnimated {
+        opacity: 0;
+        animation: fadeInPage 0.4s forwards;
+    }
+</style>
+{% endblock styles %}
+
+
+{% block content %}
+<div class="pageTitle">
+	<h1>My Projects</h1>
+</div>
+<div class="container mt-4 fadeInAnimated">
+	<div class="col-sm-7 mx-auto">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+	</div>
+	
+	{% if projects %}
+		<div class="row justify-content-center">
+			{% for project in projects %}
+			<div class="col-12 col-md-4 mt-4">
+				<div class="card text-center shadow" style="overflow: hidden;">
+					{% if project.image %}
+						<img class="card-img-top" src="/static/images/projects/{{ project.image }}" alt="Card image cap">
+					{% endif %}
+					<div class="card-body d-flex flex-column">
+						<h5 class="card-title mb-1 font-weight-bold">{{ project.title }}</h5>
+						<p class="card-text">{{ project.semester }} {{ project.year }}</p>
+						<a href="/ProjectStatus/{{ project.id }}" class="btn btn-outline-dark mx-auto mt-2 px-3 shadow">
+							View Status
+						</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	{% else %}
+		<div class="mt-5">
+			<img src="/static/images/no_project_doc.svg" style="max-width:25rem">
+			<h5 class="mt-3" style="color:rgb(116, 116, 116)">You haven't join any project!</h5>
+		</div>
+	{% endif %}
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+{% endblock content %}

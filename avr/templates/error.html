@@ -1,0 +1,28 @@
+{% extends "layout.html" %} 
+
+{% block styles %}
+{% endblock styles %} 
+
+{% block navbar %}
+	<a class="navbar-brand px-4" href="{{ url_for('index') }}">
+		<img src="/static/images/headLogo.png" style="max-height: 30px;margin-bottom:5px;"/>	
+		AVR Lab 
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+{% endblock navbar %}
+
+{% block content %}
+	<div class="container" >
+		<h1><i class="fas fa-exclamation-triangle" style="font-size:3em;"></i></h1>
+		
+		<h1 style="margin-top: 1em;">Something Went Wrong...</h1>
+		<h4>Please contact the administrator.</h4>
+		<div class="form-group row justify-content-md-center mt-5">
+				<input class="btn btn-lg btn-primary shadow px-4" id="goBackBtn" type="button" value="Go Back" onclick="window.history.back();">
+		</div>
+		<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+		
+	</div>
+{% endblock content %}

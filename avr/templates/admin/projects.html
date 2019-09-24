@@ -1,0 +1,964 @@
+{% extends "admin/adminLayout.html" %} 
+
+{% block styles %} 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+	<style>
+		#addStudentsModal .bootstrap-table {
+			border-radius: 0px;
+			box-shadow: none;
+		}
+		
+		#studentsTable tr {
+    		cursor: pointer;
+		}
+		#studentsTable tr label {
+    		cursor: pointer;
+		}
+
+		#studentsTable th[data-field="firstNameHeb"]{
+			position: relative;
+		}
+
+		#studentsTable th[data-field="firstNameHeb"] .fht-cell{
+			position: absolute;
+			width: 20rem;
+			left: -1rem;
+			top: 0;
+		}
+
+		/* #### fix for page content shifting left when opening studentsModal #### */
+		.modal {
+   	 		overflow-y: auto;
+		}
+		.modal-open {
+			overflow: auto;
+		}
+		.modal-open[style] {
+			padding-right: 0px !important;
+		}
+		/* ########################################################################*/
+		.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, 
+		.pagination>.active>span:hover, .pagination>.active>a:focus, 
+		.pagination>.active>span:focus {
+			font-weight: bold;
+		}
+
+		#viewPoster {
+			background-color: #ffe4fc; 
+			color: #831073; 
+			font-size: 90%; 
+			vertical-align: middle; 
+			padding: 0.4rem 0.8rem; 
+			margin-right: 0.4rem; 
+			font-weight: 500;
+		}
+			
+		@media (min-width: 1200px){
+			.container {
+				max-width: 1260px;
+			}
+		}
+
+		@media (min-width: 992px){
+			#projectDocImgModal .modal-dialog {
+				max-width: 1000px;
+			}
+			#editProjectModal .modal-dialog{
+				max-width: 850px;
+			}
+		}
+	</style>
+{% endblock styles %} 
+
+{% block content %}
+<h1>Projects</h1>
+<div class="container mt-4">
+	{% with messages = get_flashed_messages(with_categories=true) %} 
+		{% if messages %} 
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }} mt-4">
+					{{ message }}
+				</div>
+			{% endfor %} 
+		{% endif %} 
+	{% endwith %}
+	
+	<table id="mainTable" data-toggle="table" data-search="false" data-pagination="true" data-filter-control="true" data-show-export="false"
+	data-click-to-select="true" data-toolbar="#toolbar" data-pagination-v-align="bottom" data-strict-search="true" data-sort-order="desc" data-sort-name="year" data-url="/Admin/Projects/json" data-side-pagination="server">
+		<thead>
+			<tr>
+				<th data-field="image" data-sortable="false">Image</th>
+				<th data-field="year" data-filter-control="select" data-sortable="true">Year</th>
+				<th data-field="semester" data-filter-control="select" data-sortable="true">Semester</th>
+				<th data-field="status" data-filter-control="select" data-sortable="true">Status</th>
+				<th data-field="title" data-sortable="true">Title</th>
+				<th data-field="btnPublished" data-sortable="false">Published</th>
+			 	<th data-field="btnEdit"></th>
+				<th data-field="btnDelete"><button type="button" id="btnAddNewProject" class="btn shadow" data-toggle="modal" data-target="#addProjectModal"><i class="fas fa-plus" style=""></i> New</button></th>
+			</tr>
+		</thead>
+	</table>
+
+	<div class="modal fade bg" id="addProjectModal" tabindex="-1" role="dialog" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="color: #000;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addProjectModalLabel">Create New Project</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div id="addProjectMessages" name="errorMessage" style="display: none;">
+				</div>
+				<form class="form" id="addProjectForm" method="POST" action="{{ url_for('manageProjects') }}" enctype="multipart/form-data">
+					<input type="hidden" name="sentFormName" value="addProjectForm">
+					<div class="modal-body">
+						{{ addForm.hidden_tag() }}
+
+						
+						<div class="row mt-3">
+							<div class="col-md-2 text-md-left px-5">
+								<h5>Basics</h5>
+							</div>
+							<div class="col-md-8 ml-md-5">
+								<div class="row text-left ml-md-5">
+									<div class="col-12 col-md-4">
+										{{ addForm.new_title.label(class="col-form-label") }} 
+									</div>
+									<div class="col-12 col-md-8">
+										{{ addForm.new_title(class="") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+
+									<div class="col-12 col-md-4 mt-md-3">
+										{{ addForm.new_year.label(class="col-form-label") }} 
+									</div>
+									<div class="col-12 col-md-8 mt-md-3">
+										{{ addForm.new_year(class="") }}
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+
+									<div class="col-12 col-md-4 mt-md-3">
+										{{ addForm.new_semester.label(class="col-form-label") }}
+									</div>
+									<div class="col-12 col-md-8 mt-md-3">
+										{{ addForm.new_semester(class="") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+
+									<div class="col-12 col-md-4 mt-md-3">
+										{{ addForm.new_comments.label(class="col-form-label") }} 
+									</div>
+									<div class="col-12 col-md-8 mt-md-3">
+										{{ addForm.new_comments(class="form-control", rows="6", style="height:100%;direction:rtl;") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<hr class="my-4">
+
+						<div class="row">
+							<div class="col-md-2 text-md-left px-5 mt-2">
+								<h5>Supervisors</h5>
+							</div>
+							<div class="col-md-8 ml-md-5">
+								<div class="row text-left ml-md-5">
+									<div class="col-12 col-md-4">
+										{{ addForm.new_supervisor1.label(class="col-form-label") }} 
+									</div>
+									<div class="col-12 col-md-8">
+										{{ addForm.new_supervisor1(class="") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+
+									<div class="col-12 col-md-4 mt-md-3">
+										{{ addForm.new_supervisor2.label(class="col-form-label") }} 
+									</div>
+									<div class="col-12 col-md-8 mt-md-3">
+										{{ addForm.new_supervisor2(class="") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+
+									<div class="col-12 col-md-4 mt-md-3">
+										{{ addForm.new_supervisor3.label(class="col-form-label") }} 
+									</div>
+									<div class="col-12 col-md-8 mt-md-3">
+										{{ addForm.new_supervisor3(class="") }} 
+										<div name="invalidFeedback" class="invalid-feedback"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<hr class="my-4">
+
+						<div class="row">
+							<div class="col-md-2 text-md-left px-5 mt-4">
+								<h5>Students</h5>
+							</div>
+							<div class="col-md-10">
+								<div name="studentsList">
+								</div>
+								<div>
+									<button type="button" name="btnAddStudents" class="btn shadow-sm font-weight-bold mt-4"><i class="fa fa-plus-circle fa-fw" style=""></i> 
+										Add</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="modal-footer mt-3">
+						<button type="button" class="btn btnCloseModal" data-dismiss="modal">Close</button>
+						{{ addForm.submitAddForm(class="btn btn-primary") }}
+						<button id="btnSendingAddProjectForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+							<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+							<span class="ml-1">Creating...</span>
+						</button>
+					</div>
+				</form>
+				
+			</div>
+			</div>
+	</div>
+	
+
+	<div class="modal fade bg" id="editProjectModal" tabindex="-1" role="dialog" aria-labelledby="editProjectModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<div class="modal-title">
+						<span name="projectTitle" style="font-size:1.1rem"></span>
+						<span class="mx-2">•</span>
+						<span name="projectSemester"></span>
+						<span name="projectYear"></span>
+					</div>
+					<button type="button" class="close p-0 m-0" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true" style="color: #ffffff;">×</span>
+					</button>
+				</div>
+				<div id="editProjectMessages" name="errorMessage" style="display: none;">
+				</div>
+				<form class="form" id="editProjectForm" method="POST" action="{{ url_for('manageProjects') }}" enctype="multipart/form-data">
+				<div class="modal-body" style="padding:0;">
+				<nav>
+					<div class="nav nav-tabs" id="nav-tab" role="tablist">
+						<a class="nav-item nav-link active" data-toggle="tab" href="#statusTab" role="tab"><i class="fas fa-tasks mr-2"></i>Status</a>
+						<a class="nav-item nav-link" data-toggle="tab" href="#studentsTab" role="tab"><i class="fas fa-users mr-2"></i>Students</a>
+						<a class="nav-item nav-link" data-toggle="tab" href="#supervisorsTab" role="tab"><i class="fas fa-user-graduate mr-2"></i>Supervisors</a>
+						<a class="nav-item nav-link" data-toggle="tab" href="#basicInfoTab" role="tab"><i class="fas fa-file-alt mr-2"></i>Basics</a>
+						<a class="nav-item nav-link" data-toggle="tab" href="#posterTab" role="tab" aria-selected="false"><i class="fas fa-palette mr-2"></i>Poster</a>
+						<a class="nav-item nav-link" data-toggle="tab" href="#projectDocTab" role="tab"><i class="fas fa-project-diagram mr-2"></i>Project Doc<span name="draft" class="badge badge-pill ml-2" style="vertical-align:top;padding: 0.4rem 0.8rem;background-color:#ffe494; color: #4a3b0f;">Draft</span><span name="approved" class="badge badge-pill ml-2" style="vertical-align: top;padding: 0.4rem 0.8rem;background-color: rgb(192, 255, 218);color: rgb(0, 71, 10)">Approved</span></a>
+					</div>
+				</nav>
+					<input type="hidden" name="sentFormName" value="editProjectForm">
+					{{ editForm.hidden_tag() }}
+					
+					<div class="tab-content" id="nav-tabContent">
+						<div class="tab-pane pt-0 fade show active" id="statusTab" role="tabpanel">
+							<div class="projectStatus" style="text-align: right;direction:rtl;">
+									<div class="projectStatusContent" style="padding-top:1.7rem;"></div>
+								<div class="projectStatusNumber completed" data-status-num="1">
+									<span class="h2">1</span>
+									<span class="projectStatusStageName" style="margin-top:0.2rem; right:10rem;">הרשמה</span>
+								</div>
+								<div class="projectStatusContent">
+								
+								</div>
+
+								<div class="projectStatusNumber" data-status-num="2">
+									<span class="h2" style="margin-top: 4rem;">2</span>
+									<span class="projectStatusStageName" style="margin-top:3.5rem; right:10rem;">התנעה</span>
+								</div>
+								<div class="projectStatusContent" style="padding-top:2rem;">
+									<div class="projectStatusBox shadow">
+										<span class="tip" style="top: 2.2rem; right: -41px;"></span>
+										<div>
+											{{ editForm.requirementsDoc(class="round-checkbox") }}
+											{{ editForm.requirementsDoc.label(for="requirementsDoc") }}
+										</div>
+										<div>
+											{{ editForm.firstMeeting(class="round-checkbox") }}
+											{{ editForm.firstMeeting.label(for="firstMeeting") }}
+										</div>
+									</div>
+								</div>
+
+								<div class="projectStatusNumber" data-status-num="3">
+									<span class="h2" style="margin-top: 2.7rem;">3</span>
+									<span class="projectStatusStageName" style="margin-top:2.2rem; right:10rem;">אמצע</span>
+								</div>
+								<div class="projectStatusContent" style="padding-top:2rem;">
+									<div class="projectStatusBox shadow">
+										<span class="tip" style="top: 0.8rem; right: -41px;"></span>
+										<div>
+											{{ editForm.halfwayPresentation(class="round-checkbox") }}
+											{{ editForm.halfwayPresentation.label(for="halfwayPresentation") }}	
+										</div>
+									</div>
+								</div>
+
+								<div class="projectStatusNumber" data-status-num="4">
+									<span class="h2" style="margin-top: 6rem;">4</span>
+									<span class="projectStatusStageName" style="margin-top:5.6rem; right:10rem;">סיום</span>
+								</div>
+								<div class="projectStatusContent" style="padding-top: 2rem;">
+									<div class="projectStatusBox shadow">
+										<span class="tip" style="top: 4.2rem; right: -41px;"></span>
+										<div>
+											{{ editForm.finalMeeting(class="round-checkbox") }}
+											{{ editForm.finalMeeting.label(for="finalMeeting") }}
+										</div>
+										<div>
+											{{ editForm.equipmentReturned(class="round-checkbox") }}
+											{{ editForm.equipmentReturned.label(for="equipmentReturned") }}
+										</div>
+										<div>
+											{{ editForm.projectDoc(class="round-checkbox") }}
+											{{ editForm.projectDoc.label(for="projectDoc") }}
+										</div>
+										<div>
+											{{ editForm.gradeStatus(class="round-checkbox") }}
+											{{ editForm.gradeStatus.label(for="gradeStatus") }}
+										</div>
+										<div>
+											{{ editForm.posterStatus(class="round-checkbox") }}
+											{{ editForm.posterStatus.label(for="posterStatus") }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade px-4 py-2" id="studentsTab" role="tabpanel">
+							<div name="studentsList">
+							</div>
+							<div>
+								<button type="button" name="btnAddStudents" class="btn shadow-sm font-weight-bold mt-4 mb-3"><i class="fa fa-plus-circle fa-fw" style=""></i> Add</button>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="supervisorsTab" role="tabpanel">
+							<div class="row justify-content-center text-md-left pt-2 pb-4 mx-md-3">
+								<div class="col-12 col-md-5 mt-3">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.supervisor1.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 px-3 col-md-11">
+											{{ editForm.supervisor1(class="") }} 
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-md-5 mt-3">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.supervisor2.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 col-md-11">
+											{{ editForm.supervisor2(class="") }}
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-md-5 mt-4">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.supervisor3.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 px-3 col-md-11">
+											{{ editForm.supervisor3(class="") }} 
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5"></div>
+							</div>		
+						</div>
+						<div class="tab-pane fade" id="basicInfoTab" role="tabpanel">
+							<div class="row justify-content-center text-md-left pt-2 pb-4">
+								<div class="col-12 col-md-6 mt-3">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.title.label(class="font-weight-bold") }}
+										</div>
+										<div class="col-12 ">
+											{{ editForm.title(class="form-control") }}
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-md-4 mt-3">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.image.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 ">
+											{{ editForm.image(class="custom-file-input") }} 
+											<label class="custom-file-label text-left mx-3" for="image">Choose file</label>	
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-12 col-md-3 mt-4">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.year.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 px-3">
+											{{ editForm.year(class="") }} 
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-md-3 mt-4">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.semester.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 ">
+											{{ editForm.semester(class="") }} 
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-md-3 mt-4">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.grade.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 col-md-8">
+											{{ editForm.grade(class="form-control") }} 
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-md-1"></div>
+								
+								<div class="col-12 col-md-10 mt-4">
+									<div class="row">
+										<div class="col-12 pl-4">
+											{{ editForm.comments.label(class="font-weight-bold") }} 
+										</div>
+										<div class="col-12 ">
+											{{ editForm.comments(class="form-control p-3", rows="6", style="direction:rtl;") }}
+											<div name="invalidFeedback" class="invalid-feedback"></div>
+										</div>
+									</div>
+								</div>
+							</div>								
+						</div>
+
+						<div class="tab-pane fade pb-0" id="posterTab" role="tabpanel">
+							<div name="emptyContentMessage" class="pt-4">
+								<img src="/static/images/no_project_doc.svg" style="max-width:12rem">
+								<h5 class="mt-3 pb-4" style="color:rgb(116, 116, 116)">Students didn't send poster yet...</h5> 
+							</div>
+							<div name="content" class="row justify-content-center pt-5">
+								<div style="display: contents;"> 
+									<a target="_blank" class="seePoster">
+										<div>
+											<i class="far fa-file-alt" style="font-size: 3.5rem"></i>
+										</div>
+										<div class="my-3 font-weight-bold">
+											See Poster
+										</div>
+									</a>
+
+									<div class="col-12 mt-5 p-3 py-4 text-center" name="posterEditableByStudents" style="border-top: 1px solid #e9ecef">
+										<span class="font-weight-bold py-3" onclick="$('#posterEditableByStudents').click()" style="cursor: pointer;vertical-align: middle;">Allow students to edit</span>
+										<label class="switch my-auto ml-3">
+											{{ editForm.posterEditableByStudents(class="primary") }}
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>		
+						</div>
+
+						<div class="tab-pane fade pb-0" id="projectDocTab" role="tabpanel">
+							<div class="pt-2 mt-3">
+								<div name="emptyContentMessage">
+									<img src="/static/images/no_project_doc.svg" style="max-width:12rem">
+									<h5 class="mt-3 pb-4" style="color:rgb(116, 116, 116)">Students didn't send project doc yet...</h5> 
+								</div>
+								<div name="content" class="row justify-content-center text-md-left">
+									<div class="col-12 col-md-5">
+										<div class="row" id="projectDocImageDiv">
+											<div class="col-12" name="header">
+												<label class="font-weight-bold">Image</label>
+												<button type="button" class="btn btn-link pl-2" style="font-size:0.8rem">(Edit)</button>
+											</div>
+											<div class="col-12 mt-2 text-md-left">
+												<div name="view"></div>
+												<div name="edit" style="display:none">
+													{{ editForm.projectDocImage(class="custom-file-input") }} 
+													<label class="custom-file-label text-left mx-3 mr-md-3 col-10" for="projectDocImage">Choose file</label>	
+													<div name="invalidFeedback" class="invalid-feedback"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-12 col-md-5 mt-3 mt-md-0">
+										<div class="row" id="videoDiv">
+											<div class="col-12" name="header">
+												<label class="font-weight-bold">Video</label>
+												<button type="button" class="btn btn-link pl-2" style="font-size:0.8rem;visibility: hidden">(Edit)</button>
+											</div>
+											<div class="col-12 mt-2">
+												<div name="view">
+													<div id="projectDocVideoLoading" style="position: absolute; margin-top:13%; left:40%;" class="text-center">
+														<div class="mb-2">Loading video</div>
+														<div class="spinner-grow">
+															<div class="sr-only">Loading video...</div>
+														</div>
+													</div>
+													<iframe id="frmProjectDocVideo" width="100%" height="150" src="" frameborder="0" allowfullscreen style="display: none;">
+													</iframe>
+												</div>
+												<div name="edit" style="display:none">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-12 col-md-5 mt-5">
+										<div class="row" id="reportDiv">
+											<div class="col-12" name="header">
+												<label class="font-weight-bold">Report</label>
+												<button type="button" class="btn btn-link pl-2" style="font-size:0.8rem">(Edit)</button>
+											</div>
+											<div class="col-12 mt-md-2">
+												<div name="view"></div>
+												<div name="edit" style="display:none">
+													{{ editForm.report(class="custom-file-input") }} 
+													<label class="custom-file-label text-left mx-3 mr-md-3 col-10" for="report">Choose file</label>
+													<div name="invalidFeedback" class="invalid-feedback"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-12 col-md-5 mt-5" >
+										<div class="row" id="presentationDiv">
+											<div class="col-12" name="header">
+												<label class="font-weight-bold">Presentation</label>
+												<button type="button" class="btn btn-link pl-2" style="font-size:0.8rem">(Edit)</button>
+											</div>
+											<div class="col-12 mt-md-2">
+												<div name="view"></div>
+												<div name="edit" style="display:none">
+													{{ editForm.presentation(class="custom-file-input") }} 
+													<label class="custom-file-label text-left mx-3 mr-md-3 col-10" for="presentation">Choose file</label>
+													<div name="invalidFeedback" class="invalid-feedback"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-12 col-md-5 mt-5">
+										<div class="row" id="codeDiv">
+											<div class="col-12" name="header">
+												<label class="font-weight-bold">Code</label>
+												<button type="button" class="btn btn-link pl-2" style="font-size:0.8rem">(Edit)</button>
+											</div>
+											<div class="col-12 mt-md-2">
+												<div name="view"></div>
+												<div name="edit" style="display:none">
+													{{ editForm.code(class="custom-file-input") }} 
+													<label class="custom-file-label text-left mx-3 mr-md-3 col-10" for="code">Choose file</label>
+													<div name="invalidFeedback" class="invalid-feedback"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-12 col-md-5 mt-5">
+										<div class="row">
+											<div class="col-12">
+												{{ editForm.githubLink.label(class="font-weight-bold") }} 
+											</div>
+											<div id="githubLink" class="col-12 mt-md-2">
+												{{ editForm.githubLink(class="form-control") }} 
+												<div name="invalidFeedback" class="invalid-feedback"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-12 col-md-10 mt-5">
+										<div class="row">
+											<div class="col-12 my-auto">
+												{{ editForm.abstract.label(class="font-weight-bold my-auto") }} 
+											</div>
+											<div class="col-12 mt-2">
+												{{ editForm.abstract(class="form-control p-3", rows="8") }} 
+												<div name="invalidFeedback" class="invalid-feedback"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-12 mt-5 p-3 py-4" name="projectDocEditableByStudents" style="border-top: 1px solid #e9ecef">
+										<span class="font-weight-bold mr-3 ml-md-5 pl-md-4 py-3" onclick="$('#projectDocEditableByStudents').click()" style="cursor: pointer;vertical-align: middle;">Allow students to edit</span>
+										<label class="switch my-auto">
+											{{ editForm.projectDocEditableByStudents(class="primary") }}
+											<span class="slider round"></span>
+										</label>
+									</div>
+
+									
+									<div class="col-12 mt-5 py-4 text-center" name="projectDocApproved" style="background-color:#f8f8f8; color:#142f48">
+										<span class="font-weight-bold mr-2 py-3" onclick="$('#projectDocApproved').click()" style="cursor: pointer;">I approve this project doc</span>
+										<label class="switch my-auto">
+											{{ editForm.projectDocApproved(class="primary") }}
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btnCloseModal" data-dismiss="modal">Cancel</button>
+					{{ editForm.submitEditForm(class="btn btn-primary") }}
+					<button id="btnSavingEditProjectForm" class="btn btn-primary" type="button" style="display: none;" disabled>
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						<span class="ml-1">Saving...</span>
+					</button>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" id="projectDocImgModal" tabindex="-1" role="dialog" aria-labelledby="projectDocImgModal" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div id="enlargedProejctDocImg" class="modal-content mx-auto largerPicFitScreen">
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="deleteProjectModal" tabindex="-1" role="dialog" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header delete-header">
+					<h5 class="modal-title" id="deleteProjectModalLabel">Delete Project</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Are you sure?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btnCloseModal" data-dismiss="modal">No</button>
+					<button type="button" onclick='document.getElementById("deleteForm").submit()' class="btn btnConfirmDelete px-3">Yes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="settingVideoPublicModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered mx-auto" role="document">
+			<div class="modal-content">
+				<div class="modal-body p-0">
+					<div name="settingVideoPublic" class="alert video-processing shadow text-center mb-0">
+						Setting youtube video privacy status to public<br>
+						Please wait a few moments...<br>
+						<div class="spinner-border mt-3"></div>
+					</div>
+					<div name="settingPublicFailed" class="alert video-processing shadow text-center mb-0" style="background-color: #fff0fa;color: #6d000a;font-weight: bold; display: none;">
+						<i class="fas fa-exclamation-triangle" style="font-size: 3rem;"></i><br>
+						<div class="mt-3">There was an error during setting the video public.</div>
+						<div class="mt-4">
+							<button type="button" onclick="window.location.replace(window.location.pathname)" class="btn btnCloseModal" style="background-color: transparent;">Cancel</button>
+							<button type="button" onclick="checkVideoPublicStatus()" class="btn btn-danger ml-2 px-3 shadow" style="border-radius: 1.25rem;">Try again</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ###################  addStudentsModal #################################### -->
+	<div class="modal bg" id="addStudentsModal" data-backdrop="true" tabindex="-1" role="dialog" aria-labelledby="addStudentsModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="color: #000;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addStudentsModalLabel">Choose Students</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				
+				<div class="modal-body p-0">
+					<table id="studentsTable" data-toggle="table" data-search="false" data-pagination="true" data-filter-control="true" data-filter-show-clear="true" data-show-export="false" data-click-to-select="true" data-pagination-v-align="bottom" data-sort-name="registrationYear" data-sort-order="desc" data-strict-search="false" data-url="/Admin/StudentsForProject/json" data-side-pagination="server" data-unique-id="id">
+						<thead>
+							<tr>
+								<th data-field="profilePic" data-formatter="" data-sortable="false">Picture</th>
+								<th data-field="registrationYear" data-filter-control="select" data-sortable="true">Year</th>
+								<th data-field="registrationSemester" data-filter-control="select" data-sortable="true">Semester</th>
+								<th data-field="studentId" data-sortable="true">Id</th>
+								<th data-field="firstNameHeb" data-sortable="true" data-filter-control="input">First Name</th>
+								<th data-field="lastNameHeb" data-sortable="true">Last Name</th>
+								<th data-field="id" data-class='hiddenColumn'></th>
+								<th data-field="firstNameEng" data-class='hiddenColumn'></th>
+								<th data-field="lastNameEng" data-class='hiddenColumn'></th>
+								<th data-field="email" data-class='hiddenColumn'></th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btnCloseModal" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-primary" id="btnSaveStudentChanges" data-dismiss="modal">Confirm</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- #################### end of addStudentsModal  ######################### -->
+
+	<form id="deleteForm" method="POST" action="{{ url_for('manageProjects') }}/Delete">
+		{{ deleteForm.hidden_tag() }}
+	</form>
+
+	<div id="snackbars">
+	</div>
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+{% endblock content %}
+
+{% block scripts %}
+	<script src="/static/js/bootstrap-table.js"></script>
+	<script src="/static/js/bootstrap-table-filter-control.js"></script>
+	<script src="{{ url_for('static', filename='js/editProject.js') }}"></script>
+
+	<script>
+		let coursesList = [
+			{% for course in courses %}
+				{% if loop.index > 1 %},{% endif %}
+				{	
+					id: {{ course.id }},
+					name: "{{ course.name }}",
+					number: {{ course.number }},
+					academicPoints: {{ course.academicPoints }},
+					isDefault: {{ "true" if course.isDefault else "false" }}
+				}
+			{% endfor %}
+		];
+
+		let courseNumMaxLen = Math.max(...coursesList.map(c => String(c.number).length), 0);
+		let courseNameMaxLen = Math.max(...coursesList.map(c => c.name.length), 0);
+		
+		let defaultCourse = coursesList.find(function(course) {
+			return course.isDefault;
+		});
+
+		let defaultCourseId = defaultCourse.id;
+
+		let studentsTable = new StudentsTable( $("#studentsTable") );
+		// editModal
+		// -------- students table
+		let editProjectStudentList = new StudentsList("editProject", $("#editProjectForm div[name='studentsList']"));
+		editProjectStudentList.setAddTable(studentsTable);
+		// -------- status tab
+		editProjectStatus = new ProjectStatus("editProject");
+
+		// addModal
+		let addProjectStudentList = new StudentsList("addProject", $("#addProjectForm div[name='studentsList']"));
+		addProjectStudentList.setAddTable(studentsTable);
+
+		let previousOpenedModal = null;
+
+		/* ####### addProjectModal - Fill in proposed project supervisors ########*/
+		function getProposedProjectSupervisors(projectId) {
+			var xmlhttp = new XMLHttpRequest();
+			var url = "/Admin/ProposedProjects/"+projectId+"/json";
+			xmlhttp.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					var data = JSON.parse(this.responseText);		
+					setProposedProjectSupervisors(data);
+				}
+			};
+			xmlhttp.open("POST", url, true);
+			xmlhttp.send();
+		}
+
+		function setProposedProjectSupervisors(proposedProjectData) {
+			// reset current value
+			$("#new_supervisor1").selectpicker('val', "");
+			$("#new_supervisor2").selectpicker('val', "");
+			$("#new_supervisor3").selectpicker('val', "");
+			// fill in the proposed project supervisors
+			proposedProjectData.supervisors.forEach(function(supervisor, index){
+				$("#new_supervisor"+(index+1)).selectpicker('val', supervisor.id);
+			});
+			
+		}
+
+		$('#addProjectModal #new_title').on('change', function() {
+			if ($('#addProjectModal #new_title').has('option').length > 0) {
+				getProposedProjectSupervisors(this.value); 
+			}
+		});
+
+		/* ##### fill in first selected project's supervisors automatically ####*/
+		$('#addProjectModal').on('shown.bs.modal', function () {
+			previousOpenedModal = "addProjectModal";
+			var currentNewTitleValue = $('#new_title').val();
+			$('#new_title').val(currentNewTitleValue).trigger('change');			
+		})
+
+		$('#editProjectModal').on('show.bs.modal', function () {
+			previousOpenedModal = "editProjectModal";
+		});	
+
+		$('#addStudentsModal').on('show.bs.modal', function(e) {
+			$('#addStudentsModal').fadeIn(350); 
+			$('#'+previousOpenedModal).css("display", "none");
+		});
+		
+		$('#addStudentsModal').on('hide.bs.modal', function() {
+			$('#'+previousOpenedModal).css("display", "initial");
+		});
+
+		$('#projectDocImgModal').on('show.bs.modal', function(e) {
+			$('#projectDocImgModal').fadeIn(350); 
+			$('#editProjectModal').css("display", "none");
+		});
+		
+		$('#projectDocImgModal').on('hide.bs.modal', function() {
+			$('#editProjectModal').css("display", "initial");
+		});
+		
+		
+		 $(document).on("click","#addProjectModal button[name='btnAddStudents']", function(e) {
+			studentsTable.open("addProject", addProjectStudentList.students);
+		});	 	
+
+		var snackbarCounter = 0;
+		$("#mainTable").on('load-success.bs.table', function(){
+			$("button[name='btnEdit']").on("click", function() {
+    			$(this).find("i").hide();
+				$(this).find("span[name='loading']").show();
+				$(this).attr("disabled", true);
+			})
+
+			$("input[type='checkbox'][name='publishStatusCheckbox']").on("click", function() {
+				$.post("/Admin/Projects/UpdatePublishState", {	
+					id: $(this).data("id"),
+					state: $(this).is(":checked")
+				}).done(function(answer) {
+					let snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar'>Updated successfully!</div>`);
+					if (answer.result !== "ok") {
+						snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar snackbar-failure'>Update failed: unknown project id.</div>`);
+					}
+					$("#snackbars").append(snackbar);
+					snackbar.addClass("show");
+					setTimeout(function() { 
+						snackbar.remove();
+					}, 3000);
+					
+				}).fail(function() {
+					let snackbar = $(`<div id="snackbar${++snackbarCounter}" class='snackbar snackbar-failure'>Update failed: couldn't reach the server...</div>`);
+					$("#snackbars").append(snackbar);
+					snackbar.addClass("show");
+					setTimeout(function() { 
+						snackbar.remove();
+					}, 3000);
+				})
+			});
+		});
+
+		$('#editProjectModal').on('shown.bs.modal', function () {
+			let projectId = $("#editProjectForm #projectId").val();
+			let button = $(`button[name='btnEdit'][data-project-id='${projectId}']`);
+			button.find("span[name='loading']").hide();
+			button.find("i").show();
+			button.attr("disabled", false);
+		});	
+
+
+
+		function deleteProject(id){
+			$("#deleteForm").find('#deleteProjectId').val(id);
+		}
+
+		/* ######### fix for body shifting left when closing modal ######### */
+		$('#addStudentsModal, #editProjectModal, #projectDocImgModal').on('hidden.bs.modal', function () {
+	    	$("body").addClass('modal-open');
+		})
+		
+
+		/* -----------------------------------  Send posterForm using ajax  ----------------------------------- */
+
+ 		function handleAddProjectFormResponse(response) {
+			if (response['status'] == 'error') {
+				$("#btnSendingAddProjectForm").hide();
+				$("#submitAddForm").show();
+				$("div#addProjectMessages").append(`<div class="alert alert-danger m-0">There was an error, see details below.</div>`)
+				for(let field in response['errors']) {
+					if (field == "csrf_token") {
+						$("div#addProjectMessages").append(`<div class="alert alert-danger m-0">CSRF token expired, please reload the page.</div>`)
+					}
+					else {
+						$(`#${field}`).addClass("is-invalid");
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+						for (let error of response['errors'][field]) {
+							$(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+						}
+						$(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+					}
+				}
+				$("div#addProjectMessages").fadeIn();
+				$("#addProjectModal").animate({ scrollTop: 0 }, 600);
+				
+			}
+			else if (response['status'] == 'noCourseNumbers') {
+				$("#btnSendingAddProjectForm").hide();
+				$("#submitAddForm").show();
+				$("div#addProjectMessages").append(`<div class="alert alert-danger m-0">Error: students can't be added to a project without a course number.</div>`)
+				$("div#addProjectMessages").fadeIn();
+				$("#addProjectModal").animate({ scrollTop: 0 }, 600);
+			}
+			else if (response['status'] == 'success') {
+				let redirectURL = window.location.pathname;
+				window.location.replace(redirectURL);
+			}
+		 }
+		 
+		function sendAddFormAjax(formData) {
+			fetch(window.location.href, {
+				method: "post",
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((response) => handleAddProjectFormResponse(response))
+			.catch(function (error) {
+				console.log(error);
+			})
+		}
+
+
+		$("#addProjectForm").submit(function( event ) {
+			event.preventDefault();
+			$("#addProjectForm .is-invalid").each(function() {
+				$(this).removeClass("is-invalid");
+			})
+			$("div#addProjectMessages").empty();
+			$("div#addProjectMessages").hide();
+			$("#submitAddForm").hide();
+			$("#btnSendingAddProjectForm").show();
+
+			let formData = new FormData(document.getElementById("addProjectForm"));
+			sendAddFormAjax(formData);
+		});
+
+
+		/* -----------------------------------  END OF - Send posterForm using ajax  ----------------------------------- */
+		$('#addProjectModal select').selectpicker();
+	</script>
+
+{% endblock scripts %}

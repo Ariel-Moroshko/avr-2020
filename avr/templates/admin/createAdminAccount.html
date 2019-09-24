@@ -1,0 +1,118 @@
+{% extends "publicPageLayout.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}"> 
+<style>
+	input[type="submit"] {
+		width: 15rem;
+		height: 2.5rem;
+	}
+</style>
+{% endblock styles %} 
+
+{% block content %}
+	<div class="pageTitle">
+		<h1>Create Admin Account</h1>
+	</div>
+	<div class="container mt-5">
+		<form method="POST" action="">
+			{{ form.hidden_tag() }}
+			<div class="form-group row justify-content-md-center">
+				<div class="col-sm-8">
+					{% with messages = get_flashed_messages(with_categories=true) %} 
+						{% if messages %} 
+							{% for category, message in messages %}
+								<div class="alert alert-{{ category }}">
+									{{ message }}
+								</div>
+							{% endfor %} 
+						{% endif %} 
+					{% endwith %}
+				</div>
+			</div>
+			<div class="form-group row justify-content-md-center">
+				<div class="col-md-3">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.25rem 0 0 1.25rem;"><i class="fas fa-user"></i></div>
+						</div>
+						{% if form.id.errors %} 
+							{{ form.id(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.id.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %} 
+							{{ form.id(class="form-control form-control-lg") }} 
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center">
+				<div class="col-md-3">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.25rem 0 0 1.25rem;"><i class="fas fa-key"></i></div>
+						</div>
+						{% if form.password.errors %} 
+							{{ form.password(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.password.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %} 
+							{{ form.password(class="form-control form-control-lg") }} 
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center">
+				<div class="col-md-3">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.25rem 0 0 1.25rem;"><i class="fas fa-key"></i></div>
+						</div>
+						{% if form.confirmPassword.errors %} 
+							{{ form.confirmPassword(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.confirmPassword.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %} 
+							{{ form.confirmPassword(class="form-control form-control-lg") }} 
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center mt-0">
+				{{ form.submitForm(class="btn btn-primary mt-4") }}
+			</div>
+		</form>
+		<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+	</div>
+		
+{% endblock content %}
+
+{% block scripts %}
+<script>
+	$( "input" ).on("focus",  function() {
+		$(this).css({"-webkit-box-shadow": "none", "outline": "-webkit-focus-ring-color auto 0px", "border-left": "1px solid #dadada", "transition-property": "none"});
+		$(this).closest(".input-group").toggleClass("inputGroupFocused");
+	});
+
+	$( "input" ).on("focusout",  function() {
+		$(this).css({"border": "1px solid #ced4da"});
+		$(this).closest(".input-group").toggleClass("inputGroupFocused");
+	});
+
+	$(function (){
+		$("input#id").focus();
+	});
+</script>
+{% endblock scripts %}

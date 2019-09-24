@@ -1,0 +1,369 @@
+{% extends "studentLayout.html" %} 
+{% block styles %}
+<style>
+    #submitForm {
+        width: 100%;
+        font-size: 1.1rem;
+        background-color: #0f2739;
+        color: #fff;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    #submitForm:hover {
+        background-color: #2f4555;
+    }
+
+    .biggerRight {
+        padding: 0;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0}
+        to {opacity: 1}
+    }
+
+    .fadeInAnimated {
+        opacity: 0;
+        animation: fadeIn 0.4s forwards;
+    }
+
+    @media (min-width: 768px){
+        .biggerRight {
+            padding-left: 1rem;
+            padding-right: 0;
+        }
+    }
+</style>
+{% endblock styles %}
+
+{% block content %}
+<div class="pageTitle">
+    <nav aria-label="breadcrumb" id="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; padding: 0rem 3rem;">
+            <li class="breadcrumb-item"><a href="/home">My Projects</a></li>
+            <li class="breadcrumb-item"><a href="/ProjectStatus/{{ project.id }}">{{ project.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Send Project Doc</li>
+        </ol>
+    </nav>
+    <h1>Send Project Doc</h1>
+</div>
+<div class="container mt-5 fadeInAnimated">
+    {% if not isStudentEnrolledInProject or not allowedToSend %}
+		<div class="col-sm-7 mx-auto" style="margin-top:3em">
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">
+                            {{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+		</div>
+
+	{% else %}
+		
+        <div id="messages" class="col-sm-7 mx-auto">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <div class="shadow bg-white mt-4 col-md-7 mx-auto" style="border-radius: 0.8rem;">
+            <form class="form" id="projectDocForm" method="POST" action="" enctype="multipart/form-data">
+                {{ projectDocForm.hidden_tag() }}
+                <div class="row justify-content-center text-left pt-5 px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto required">
+                        {{ projectDocForm.image.label(class="font-weight-bold") }} 
+                    </div>
+                    <div class="col-12 col-md-7">
+                        {{ projectDocForm.image(class="custom-file-input") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"><small>Allowed: jpg, jpeg, png, gif, bmp</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                        <label class="custom-file-label text-left ml-md-3" for="image">Choose file</label> 
+                    </div>
+                </div>
+
+
+                <div class="row justify-content-center mt-4 text-left px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto required">
+                        {{ projectDocForm.video.label(class="mb-0 font-weight-bold") }} 
+                        <div class="ml-2"><small>(Up to 3 min)</small></div>
+                    </div>
+                    <div class="col-12 col-md-7">
+                        {{ projectDocForm.video(class="custom-file-input") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"><small>Allowed: mp4</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                        <label class="custom-file-label text-left ml-md-3" for="video">Choose file</label> 
+                    </div>
+                </div>
+
+
+                <div class="row justify-content-center mt-4 text-left px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto required">
+                        {{ projectDocForm.report.label(class="font-weight-bold") }} 
+                    </div>
+                    <div class="col-12 col-md-7">
+                        {{ projectDocForm.report(class="custom-file-input") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"><small>Allowed: doc, docx, pdf</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                        <label class="custom-file-label text-left ml-md-3" for="report">Choose file</label> 
+                    </div>
+                </div>
+
+
+                <div class="row justify-content-center mt-4 text-left px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto required">
+                         {{ projectDocForm.presentation.label(class="font-weight-bold") }} 
+                    </div>
+                    <div class="col-12 col-md-7">
+                        {{ projectDocForm.presentation(class="custom-file-input") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"><small>Allowed: ppt, pptx</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                        <label class="custom-file-label text-left ml-md-3" for="presentation">Choose file</label> 
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-4 text-left px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto required">
+                         {{ projectDocForm.abstract.label(class="font-weight-bold my-auto") }} 
+                    </div>
+                    <div class="col-12 col-md-7 biggerRight">
+                        {{ projectDocForm.abstract(class="form-control", rows="8") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-5 text-left px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto">
+                         {{ projectDocForm.code.label(class="font-weight-bold mb-0") }}<div><small>(optional)</small></div>
+                    </div>
+                    <div class="col-12 col-md-7">
+                        {{ projectDocForm.code(class="custom-file-input") }} 
+                        <div name="infoText" class="text-left ml-2 mt-2"><small>Allowed: zip, rar</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                        <label class="custom-file-label text-left ml-md-3" for="code">Choose file</label> 
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-4 text-left px-4 px-md-0">
+                    <div class="col-12 col-md-3 my-auto">
+                         {{ projectDocForm.githubLink.label(class="font-weight-bold my-auto") }}<div><small>(optional)</small></div>
+                    </div>
+                    <div class="col-12 col-md-7 biggerRight">
+                        {{ projectDocForm.githubLink(class="form-control") }} 
+                        <div name="infoText" class="text-left ml-2"><small>github.com/*</small></div>
+                        <div name="invalidFeedback" class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-5 text-center">
+                    {{ projectDocForm.submitForm(class="btn shadow py-3 mt-2") }}
+                </div>
+            </form>
+        </div>
+   
+    {% endif %}
+	<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+</div>
+{% if isStudentEnrolledInProject and allowedToSend %}
+    <div class="modal fade" id="sendingModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered mx-auto" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <div id="videoProcessing" class="alert video-processing shadow text-center mb-0 p-4">
+                        Sending project doc...<br>
+                        (may take a few moments)<br>
+                        <div id="formProgressBar" class="progress mt-3" style="height: 1.8rem;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 8%;font-size: 1rem;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                0%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    {% if isStudentEnrolledInProject and allowedToSend %}
+    /* show file name in the input box when selecting a file */
+    $('#image, #video, #report, #presentation, #code').on('change',function(){
+        let fileName = $(this).val().split('\\').pop(); 
+        $(this).closest("div").find(".custom-file-label").html(fileName);
+    })
+
+    var request = new XMLHttpRequest();
+    request.responseType = 'json';
+    let isFormValid = true;
+
+    request.addEventListener('load', function(e) {
+        let response = request.response;
+        $("#projectDocForm div[name='infoText']").each(function() {
+            $(this).fadeIn();
+        })
+        if (response['status'] == 'error') {
+            $("#submitForm").val("Send");
+            $("#submitForm").attr("disabled", false);
+            $("div#messages").append(`<div class="alert alert-danger">There was an error, see details below.</div>`)
+            for(let field in response['errors']) {
+                if (field == "csrf_token") {
+                    $("div#messages").append(`<div class="alert alert-danger">CSRF token expired, please reload the page.</div>`)
+                }
+                else {
+                    $(`#${field}`).addClass("is-invalid");
+                    $(`#${field}`).parent().find(`div[name='invalidFeedback']`).empty();
+                    $(`#${field}`).parent().find(`div[name='infoText']`).hide();
+                    for (let error of response['errors'][field]) {
+                        $(`#${field}`).parent().find(`div[name='invalidFeedback']`).append(`<span>${error}</span>`);
+                    }
+                    $(`#${field}`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+                }
+            }
+            isFormValid = false;
+            $("#sendingModal").modal("hide");
+            $('#formProgressBar .progress-bar').css('width', '8%').attr('aria-valuenow', "0").text("0%");
+            $("html, body").animate({ scrollTop: 0 }, 600);
+        }
+        else if (response['status'] == 'success') {
+            let redirectURL = window.location.pathname.split("/");
+            redirectURL.pop();
+            redirectURL = redirectURL.join("/");
+            window.location.replace(redirectURL);
+        }
+        else if (response['status'] == 'notAllowed') {
+            $("#submitForm").val("Send");
+            $("#submitForm").attr("disabled", false);
+            $("div#messages").append(`<div class="alert alert-danger">Error: you are currently not allowed to send project doc.</div>`);
+            isFormValid = false;
+            $("#sendingModal").modal("hide");
+            $('#formProgressBar .progress-bar').css('width', '8%').attr('aria-valuenow', "0").text("0%");
+            $("html, body").animate({ scrollTop: 0 }, 600);
+        }
+        else if (response['status'] == 'fileTooLarge') {
+            $("#submitForm").val("Send");
+            $("#submitForm").attr("disabled", false);
+            $("div#messages").append(`<div class="alert alert-danger">Error: the file you are trying to send is too large.</div>`);
+            isFormValid = false;
+            $("#sendingModal").modal("hide");
+            $('#formProgressBar .progress-bar').css('width', '8%').attr('aria-valuenow', "0").text("0%");
+            $("html, body").animate({ scrollTop: 0 }, 600);
+        }
+    });
+
+    // Upload progress on request.upload
+    request.upload.addEventListener('progress', function(e) {
+        var percent_complete = Math.round((e.loaded / e.total)*100);  
+        // Percentage of upload completed
+        $('#formProgressBar .progress-bar').css('width', Math.max(percent_complete, 8)+'%').attr('aria-valuenow', percent_complete).text(percent_complete+"%");
+    });
+
+    // Send form using ajax
+    $("#projectDocForm").submit(function( event ) {
+        event.preventDefault();
+
+        $("#submitForm").val("Sending...");
+        $("#submitForm").attr("disabled", true);
+        $("div#messages").empty();
+
+        if ($("#video").val() != "") {
+            let isVideoValid = validateVideo();
+            if ( ! isVideoValid ) {
+                return;
+            }
+            
+            validateVideoLength();
+        }
+        else {
+            sendForm();
+        }
+    });
+
+    function sendForm() {
+        isFormValid = true;
+        $("#projectDocForm .is-invalid").each(function() {
+            $(this).removeClass("is-invalid");
+        })
+        $("#sendingModal").modal({backdrop: 'static', keyboard: false});
+        request.open('post', window.location.href); 
+        var formData = new FormData(document.getElementById("projectDocForm"));
+        request.send(formData);
+    }
+
+    $("#sendingModal").on('shown.bs.modal', function(){
+        if (!isFormValid) {
+            $("#sendingModal").modal("hide");
+            isFormValid = true;
+        }
+    });
+
+    function validateVideo() {
+        let videoFileName = $("#video").val();
+        let videoExt = videoFileName.split('.').pop();
+        let isVideoValid = true;
+        let errorMessage = "";
+        if (videoFileName != "" && videoExt != "mp4") {
+            isVideoValid = false;
+            errorMessage = "File does not have an approved extension: mp4";
+        }
+        else if($("#video")[0].files.length > 0) {
+            let videoSize = $("#video")[0].files[0].size;
+            if(videoSize <= 0) {
+                isVideoValid = false;
+                errorMessage = "Invalid video file. video can't be empty.";
+            }
+        }
+        
+        if( ! isVideoValid ) {
+            formErrorMessage(errorMessage)
+            return false;
+        }
+        return true;
+    }
+
+    function formErrorMessage(errorMessage) {
+        $("#submitForm").val("Send");
+        $("#submitForm").attr("disabled", false);
+        $("div#messages").append(`<div class="alert alert-danger">There was an error, see details below.</div>`)
+        $(`#video`).addClass("is-invalid");
+        $(`#video`).parent().find(`div[name='invalidFeedback']`).empty();
+        $(`#video`).parent().find(`div[name='infoText']`).hide();
+        $(`#video`).parent().find(`div[name='invalidFeedback']`).append(`<span>${errorMessage}</span>`);
+        $(`#video`).parent().find(`div[name='invalidFeedback']`).fadeIn();
+        $("html, body").animate({ scrollTop: 0 }, 600);
+    }
+    
+    function validateVideoLength() {
+        let video = document.createElement('video');
+        let file = $("#video")[0].files[0];
+        video.preload = 'metadata';
+
+        video.onloadedmetadata = function() {
+            let videoDurationMinutes = Math.floor(video.duration/60);
+            window.URL.revokeObjectURL(video.src);
+            if( videoDurationMinutes > 3 ) {
+                formErrorMessage("Video is too long. 3 minutes is the maximum");
+            }
+            else {
+                sendForm();
+            }
+        }
+        video.onerror = function() {
+            formErrorMessage("Invalid mp4 video file. (are you able to play it?)")
+        }
+        video.src = URL.createObjectURL(file);
+    }
+
+    {% endif %}
+</script>
+{% endblock scripts %}

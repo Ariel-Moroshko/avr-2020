@@ -1,0 +1,432 @@
+{% extends "publicPageLayout.html" %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/slick/slick.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/slick/slick-theme.css') }}"/>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+<style>
+
+    .hero {
+        position: relative;
+        margin-top: 56px; 
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .background-video video {
+        position: absolute;
+        right: -80%;
+        bottom: 0;
+        height: 100%;
+    }
+
+    .background-video::after  {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.65;
+        background-color: #0a0e11;
+    } 
+    
+    #mainHeader {
+        position: absolute;
+        top: 50%;
+		left: 50%;
+		width: 100%;
+		transform: translate(-50%, -70%);
+        color: #f3f3f3;
+		font-family: 'Nunito', sans-serif;
+       
+	}
+
+  
+
+    
+
+
+
+	.slick-next, .slick-prev {
+		filter: invert(100%);
+		transform: scale(1.3);
+	}
+	.slick-next {
+        right: -5px;
+        top: 60%;
+        z-index: 999;
+	}
+	.slick-prev {
+        left: -5px;
+        top: 60%;
+        z-index: 999;
+	}
+
+	/* For width smaller than 400px: */
+	.logo {
+        width: 50%;
+        filter: invert(100%);
+	}
+
+	.btnSeeAll { 
+		background-color: #07041b;
+		color: #dedede;
+		border-radius: 1.2rem;
+		font-size: 1.1rem;
+	}
+
+	.btnSeeAll:hover { 
+		background-color: #100941;
+		color: #dedede;
+	}
+    
+    h1 {
+		margin-top: 0;
+	}
+	
+
+	#mainHeader h1 {
+		font-size: 3rem;
+		font-weight: 600;
+    	letter-spacing: -0.2rem;
+	}
+	
+	#mainHeader h2 {
+		font-size: 1.5rem;
+		margin-top: 2rem;
+		color: #ccdcfa;
+		
+	}
+
+	#mainHeader h2 span[name="reality"] {
+		animation-delay: 0.8s;
+	}
+
+	#mainHeader h2 span[name="reimagined"] {
+		animation-delay: 2.2s;
+		opacity: 0;
+		display: inline-block;
+	}
+ 
+ 
+	@keyframes fadeIn {
+		from {opacity: 0}
+		to {opacity: 1}
+	}
+
+	.fadeInAnimated {
+		opacity: 0;
+		animation: fadeIn 2s forwards;
+	}
+
+	@keyframes slideIn {
+	    100% { 
+			opacity: 1;
+			transform: translateY(0); 
+		}
+	}
+
+	.slideInAnimated {
+        /* animation: slideIn 1s forwards; */
+        animation: fadeIn 1.5s forwards;
+		/* transform: translateY(10rem); */
+	}
+
+
+	#logoImg  {
+		background-color: #02091c;
+    }
+    
+    div[name="proposedProjects"] {
+        font-family: 'Nunito', sans-serif;
+        font-size: 2.7rem; 
+        font-weight: 600;
+        margin: 4rem auto;
+        letter-spacing: -0.1rem;
+    }
+
+	div[name="proposedProjects"]::after,  div[name="staff-title"]::after{
+		content: "";
+		width: 9rem;
+		height: 0.4rem;
+		background-color: rgb(0, 26, 76);
+		margin: auto auto;
+		margin-top: 0.2rem;
+		display: block;
+    }
+
+    div[name="staff-title"]::after {
+        width: 5rem;
+    }
+
+    div[name="staff-title"] {
+        font-family: 'Nunito', sans-serif;
+        font-size: 2.7rem; 
+        font-weight: 600;
+        padding: 3rem 0 4rem 0;
+        letter-spacing: -0.1rem;
+    }
+    
+    .staff-box:not(:first-child){
+        margin-top: 8rem;
+    }
+    .staff-box img {
+        filter: grayscale(1);
+        transition: all 0.3s ease-in;
+        border: 1px solid white;
+    }
+
+    .staff-box:hover img {
+        filter: grayscale(0);
+    }
+
+    
+    .carousel h4{
+        margin:1em 0 0 0;
+        color: #051035;
+        font-weight: bold;
+    }
+
+    .carousel p{
+        font-size: 1.1rem;
+        color: rgb(7, 7, 17);
+        width: 70%
+    }
+
+
+	/* For width 400px and larger: */
+	@media only screen and (min-width: 400px) {
+		.logo { 
+            width: 24rem;
+            padding: 0.8rem 0;
+		}
+		#mainHeader h1 {
+			font-size: 3.9rem;	
+		}
+	
+		#mainHeader h2 {
+			font-size: 2.2rem;
+		}
+	}
+
+    
+	@media only screen and (min-width: 640px) {
+        .background-video video {
+            right: 0;
+            bottom: 0;
+            height: initial;
+            min-width: 100%; 
+            min-height: 100%;
+        }
+    }
+	
+
+	@media only screen and (min-width: 720px) {
+		#mainHeader h1 {
+			font-size: 3.9rem;	
+		}
+	
+		#mainHeader h2 {
+			font-size: 2.2rem;
+        }
+        
+        .slick-next {
+            right: -50px;
+        }
+        .slick-prev {
+            left: -50px;
+        }
+
+        .carousel p{
+            width: 100%;
+        }
+	}
+
+	@media only screen and (min-width: 1440px) {
+        .background-video video {
+            right: 0;
+        }
+
+		#mainHeader h1 {
+			font-size: 6rem;	
+		}
+	
+		#mainHeader h2 {
+			font-size: 2.9rem;
+		}
+	}
+	
+	@media only screen and (min-width: 1920px) {
+		#mainHeader h1 {
+			font-size: 6.8rem;
+		}
+	
+		#mainHeader h2 {
+			font-size: 3.5rem;
+		}
+	}
+
+	@media only screen and (min-width: 2560px) {
+		#mainHeader h1 {
+			font-size: 7.8rem;
+		}
+	
+		#mainHeader h2 {
+			font-size: 3.9rem;
+		}
+	}
+	
+	
+</style>
+{% endblock styles %} 
+
+{% block content %}
+
+<div class="hero"> 
+    <div class="background-video">
+        <video autoplay muted loop>
+            <source src="https://cdn9.dissolve.com/p/D718_59_023/D718_59_023_detail.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
+
+    <div id="mainHeader">
+        <h1 class="fadeInAnimated">Virtual & Augmented<br>Reality Lab</h1>
+        <h2><span class="fadeInAnimated" name="reality">Reality,</span> <span name="reimagined" class="slideInAnimated">reimagined.</span</h2>
+    </div>
+</div>
+
+
+    
+
+
+
+       
+<!-- <div class="video-overlay">
+	<div id="mainHeader">
+		<h1 class="fadeInAnimated">Virtual & Augmented<br>Reality Lab</h1>
+		<h2><span class="fadeInAnimated" name="reality">Reality,</span> <span name="reimagined" class="slideInAnimated">reimagined.</span</h2>
+	</div>
+</div> -->
+
+
+{% if proposedProjects %}
+<div class="container" style="margin-top: 1rem; margin-bottom: 5rem">			
+        <div name="proposedProjects" data-aos="fade-up" data-aos-anchor-placement="top-bottom">Our Proposed Projects</div>
+        <div class="carousel">			
+            {% for proposedProject in proposedProjects %}
+                <div class="mx-auto">
+                    <div>
+                        <a href="{{ url_for('proposedProjects') }}">
+                            {% if proposedProject.image %}
+                                <img class="mx-auto col-12" style="height: 200px;object-fit: cover;" src="/static/images/proposed_projects/{{proposedProject.image}}">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <h4>{{ proposedProject.title }}</h4>
+                    <p class="mx-auto mt-2">	
+                        {{ proposedProject.description }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+	<div class="pt-4">
+		<a href="{{ url_for('proposedProjects') }}" class="btn btnSeeAll btn-lg shadow font-weight-bold" role="button" style="width:10rem;">See All</a>
+	</div>	
+</div>
+{% endif %}
+
+<div class="container-fluid" style="background-color: #dce5ec; color: #222427; padding-bottom: 5rem">	
+    <div name="staff-title" data-aos="fade-in" data-aos-anchor-placement="top-bottom">The Staff</div>
+    <div class="row justify-content-center my-5">
+        <div class="col-12 col-md-6 col-lg-4 col-xl-4 mx-2 mt-lg-0 staff-box" style="position: relative; max-width: 400px" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
+            <img src="/static/images/yaron_honen.jpg" class="shadow" style="position: absolute;top: -4.2rem; left: 50%;transform: translateX(-50%); border-radius: 50%; width: 8rem; height: 8rem; object-fit: cover">
+            <div style="padding: 2rem 0rem; background-color: #fafdff; border-radius: 0.3rem;" class="shadow">
+                <div class="" style="color: #001a4c; font-weight: 600;margin-top:2.9rem; margin-bottom: 0; font-size:1.8rem">Yaron Honen</div>
+                <div class="" style="color: #3c33aa; font-size: 1.2rem; margin-top: -0.1rem;font-weight: 600;">Chief Engineer</div>
+                <div style="margin-left: 50%; transform: translateX(-62%); margin-top: 1.3rem">
+                    <div class="row mt-3" style="font-size: 1.1rem">
+                        <div class="col-1"><i class="fas fa-envelope"></i></i></div>
+                        <div class="col-8 text-left">yaronh@cs.technion.ac.il</div>
+                    </div>
+                    <div class="row mt-2" style="font-size: 1.1rem">
+                        <div class="col-1"><i class="fas fa-phone-volume"></i></div>
+                        <div class="col-8 text-left">04-8295535</div>
+                    </div>
+                    <div class="row mt-2" style="font-size: 1.1rem">
+                        <div class="col-1"><i class="fas fa-building"></i></div>
+                        <div class="col-8 text-left">Office 441</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4 col-xl-4 mx-2 mt-lg-0 staff-box" style="position: relative; max-width: 400px" data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-delay="200">
+            <img src="/static/images/boaz_sternfeld.jpg" class="shadow" style="position: absolute;top: -4.2rem; left: 50%;transform: translateX(-50%); border-radius: 50%; width: 8rem; height: 8rem; object-fit: cover">
+            <div style="padding: 2rem 0rem; background-color: #fafdff; border-radius: 0.3rem;" class="shadow">
+                <div class="" style="color: #001a4c; font-weight: 600;margin-top:2.9rem; margin-bottom: 0; font-size:1.8rem">Boaz Sternfeld</div>
+                <div class="" style="color: #3c33aa; font-size: 1.2rem; margin-top: -0.1rem;font-weight: 600;">Lab Engineer</div>
+                <div style="margin-left: 50%; transform: translateX(-62%); margin-top: 1.3rem">
+                    <div class="row mt-3" style="font-size: 1.1rem">
+                        <div class="col-1"><i class="fas fa-envelope"></i></i></div>
+                        <div class="col-8 text-left">boazs@cs.technion.ac.il</div>
+                    </div>
+                    <div class="row mt-2" style="font-size: 1.1rem">
+                        <div class="col-1"><i class="fas fa-phone-volume"></i></div>
+                        <div class="col-8 text-left">04-8294334</div>
+                    </div>
+                    <div class="row mt-2" style="font-size: 1.1rem">
+                        <div class="col-1"><i class="fas fa-building"></i></div>
+                        <div class="col-8 text-left">Office 421</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="logoImg" class="py-3"> 
+    <img src="/static/images/avrLogo.png" class="logo">	
+</div>
+{% endblock content %}
+
+{% block scripts %}
+	<script type="text/javascript" src="{{ url_for('static', filename='css/slick/jquery-1.11.0.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='css/slick/jquery-migrate-1.2.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='css/slick/slick.min.js') }}"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+	<script>
+        $(document).ready(function(){
+            $('.carousel').slick({
+                dots: true,
+                infinite: true,
+                autoplay: true,
+                autoplaySpeed: 4000,
+                speed: 1000,
+                slidesToShow: 3,
+                adaptiveHeight: false,
+                responsive: [{
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 2,
+                    }
+                    },
+                    {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }]
+            });
+        });
+        
+        AOS.init({
+          once: true,
+          duration: 1200
+        });
+  </script>	
+{% endblock scripts %}

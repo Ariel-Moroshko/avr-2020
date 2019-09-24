@@ -1,0 +1,97 @@
+{% extends "publicPageLayout.html" %}
+
+{% block styles %}
+<style>
+	input[type="submit"] {
+		width: 15rem;
+		height: 2.5rem;
+	}
+</style>
+{% endblock styles %} 
+
+{% block content %}
+	<div class="pageTitle">
+		<h1>Set New Password</h1>
+	</div>
+	<div class="container mt-5" >
+		<form method="POST" action="">
+			{{ form.hidden_tag() }}
+			<div class="form-group row justify-content-md-center">
+				<div class="col-sm-8">
+					{% with messages = get_flashed_messages(with_categories=true) %} 
+						{% if messages %} 
+							{% for category, message in messages %}
+								<div class="alert alert-{{ category }}">
+									{{ message }}
+								</div>
+							{% endfor %} 
+						{% endif %} 
+					{% endwith %}
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center">
+				<div class="col-md-3">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.25rem 0 0 1.25rem;"><i class="fas fa-key"></i></div>
+						</div>
+						{{ form.password(class="form-control form-control-lg") }}
+					</div>
+					{% if form.password.errors %} 
+						<div class="invalid-feedback d-block">
+							{% for error in form.password.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>							 
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center">
+				<div class="col-md-3">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" style="border-radius: 1.25rem 0 0 1.25rem;"><i class="fas fa-key"></i></div>
+						</div>
+						{{ form.confirmPassword(class="form-control form-control-lg") }} 
+					</div>
+					{% if form.confirmPassword.errors %} 
+						<div class="invalid-feedback d-block">
+							{% for error in form.confirmPassword.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="form-group row justify-content-md-center mt-0">				
+				{{ form.submitForm(class="btn btn-primary mt-4") }}
+			</div>
+		</form>
+		<img src="/static/images/powered_by.png" class="mt-5 img-responsive">
+	</div>
+		
+		
+
+{% endblock content %}
+
+
+{% block scripts %}
+<script>
+	$( "input[name='password'], input[name='confirmPassword']" ).on("focus",  function() {
+		$(this).css({"-webkit-box-shadow": "none", "outline": "-webkit-focus-ring-color auto 0px", "border-left": "1px solid #dadada", "transition-property": "none"});
+		$(this).closest(".input-group").toggleClass("inputGroupFocused");
+	});
+
+	$( "input[name='password'], input[name='confirmPassword']" ).on("focusout",  function() {
+		$(this).css({"border": "1px solid #ced4da"});
+		$(this).closest(".input-group").toggleClass("inputGroupFocused");
+	});
+
+	$(function (){
+		$("input[name='id']").focus();
+	});
+</script>
+{% endblock scripts %}
