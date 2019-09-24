@@ -25,7 +25,7 @@ logHandler.setLevel(logging.INFO)
 app.logger.setLevel(logging.INFO)
 app.logger.addHandler(logHandler) 
 
-app.config['SECRET_KEY'] = '6efcac58452ff2e5025a11c9873cc6fd'
+app.config['SECRET_KEY'] = ''
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
